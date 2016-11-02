@@ -1,3 +1,4 @@
+import time
 from flask_sqlalchemy import SQLAlchemy
 
 # This is the connection to the PostgreSQL database; we're getting this through
@@ -55,6 +56,21 @@ class FestivalArtist(db.Model):
     day2_playing = db.Column(db.DateTime)
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.stage_id'))
 
+    # Define relationship to festival
+    festival = db.relationship("Festival",
+                               backref=db.backref("festivalartists",
+                               order_by=festival_artist_id))
+
+    # Define relationship to artist
+    artist = db.relationship("Artist",
+                             backref=db.backref("festivalartists",
+                             order_by=festival_artist_id))
+
+    #Define relationship to stage
+    stage = db.relationship("Stage",
+                            backref=db.backref("festivalartists",
+                            order_by=festival_artist_id))
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -90,6 +106,10 @@ class Song(db.Model):
     song_name = db.Column(db.String(100), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'), nullable=False)
 
+    playlists = db.relationship('Playlist',
+                               secondary='playlist_songs',
+                               backref='songs')
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -99,6 +119,9 @@ class Song(db.Model):
 
 class PlaylistSong(db.Model):
     """Association table connecting playlists and songs."""
+
+    # This is an association table; it does not contain any interesting fields
+    # Noelis would call it 'Frankentable'
 
     __tablename__ = "playlist_songs"
 
@@ -147,3 +170,25 @@ class User(db.Model):
 
         return "<User user_id=%s user_email=%s>" % (self.user_id,
                                                     self.user_email)
+
+
+##############################################################################
+# Helper functions
+
+def connect_to_db(app):
+    """Connect the database to our Flask app."""
+
+    # Configure to use our PostgreSQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///playfest'
+#    app.config['SQLALCHEMY_ECHO'] = True
+    db.app = app
+    db.init_app(app)
+
+
+if __name__ == "__main__":
+    # As a convenience, if we run this module interactively, it will leave
+    # you in a state of being able to work with the database directly.
+
+    from server import app
+    connect_to_db(app)
+    print "Connected to DB."
