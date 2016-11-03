@@ -95,33 +95,37 @@ def load_festivalartists():
         d = json.load(json_data)
 
         for dict in d:
-            artist_name = d.get('artist')
-            day1_playing = d.get('day1', None)
-            day2_playing = d.get('day2', None)
-            stage = d.get('stage', None)
+            artist_name = d.get('artist')            
+            day1 = d.get('day1', None).strip()
+            day2 = d.get('day2', None).strip()
+            stage = d.get('stage', None).strip()
 
-            festival_info = 
+            # Is this necessary if just Coachella?
+            festival_info = Festival.query.filter_by(festival_name="Coachella 2016").first()
+            festival_id = festival_info.festival_id
 
             artist_info = Artist.query.filter_by(artist_name = artist_name).first()
-
             artist_id = artist_info.artist_id
 
-            artist_festival = ArtistFestival(festival_id=1,
+            if day1 and (day1 is not None):
+                day1_playing = datetime.strptime(day1, '%A, %B %d, %Y')
+            else:
+                day1_playing = None
+
+            if day2 and (day2 is not None):
+                day2_playing = datetime.strptime(day2, '%A, %B %d, %Y')
+            else:
+                day2_playing = None
+
+            artist_festival = ArtistFestival(festival_id=festival_id,
                                              artist_id=artist_id,
                                              day1_playing=day1_playing,
                                              day2_playing=day2_playing,
                                              stage=stage)
 
-        # We need to add to the session or it won't ever be stored
-        db.session.add(artist)
+            db.session.add(artist)
 
-    # Once we're done, we should commit our work
-    db.session.commit()
-
-
-
-
-
+        db.session.commit()
 
 
 if __name__ == "__main__":
@@ -130,3 +134,5 @@ if __name__ == "__main__":
 
     load_festivals()
     load_coachella_artists()
+    load_coachella_stages()
+    load_festivalartists()
