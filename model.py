@@ -32,16 +32,15 @@ class Stage(db.Model):
 
     __tablename__ = "stages"
 
-    stage_id = db.Columm(db.Integer, autoincrement=True, primary_key=True)
+    stage_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     stage_name = db.Column(db.String(30), nullable=False)
     festival_id = db.Column(db.Integer, db.ForeignKey('festivals.festival_id'))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Stage stage_id=%s stage_name=%s festival_id=%s>" % (self.stage_id,
-                                                                     self.stage_name,
-                                                                     self.festival_id)
+        return "<Stage stage_id=%s stage_name=%s>" % (self.stage_id,
+                                                      self.stage_name)
 
 
 class FestivalArtist(db.Model):
@@ -67,9 +66,9 @@ class FestivalArtist(db.Model):
                              order_by=festival_artist_id))
 
     #Define relationship to stage
-    stage = db.relationship("Stage",
-                            backref=db.backref("festivalartists",
-                            order_by=festival_artist_id))
+    # stage = db.relationship("Stage",
+    #                         backref=db.backref("festivalartists",
+    #                         order_by=festival_artist_id))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -86,7 +85,7 @@ class Artist(db.Model):
 
     artist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     artist_name = db.Column(db.String(64), nullable=False)
-    artist_URL = db.Column(db.String(100), nullable=True)
+    artist_url = db.Column(db.String(100), nullable=True)
     artist_img = db.Column(db.String(300), nullable=True)
     artist_bio = db.Column(db.String(300), nullable=True)
 
@@ -142,7 +141,7 @@ class Playlist(db.Model):
 
     __tablename__ = "playlists"
 
-    playlist_id = db.Columm(db.Integer, autoincrement=True, primary_key=True)
+    playlist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     playlist_name = db.Column(db.String(100), nullable=True)
     spotify_playlist_url = db.Column(db.String(300), nullable=True)
@@ -159,7 +158,7 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    user_id = db.Columm(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_email = db.Column(db.String(50), nullable=False)
     user_password = db.Column(db.String(25), nullable=False)
     user_fname = db.Column(db.String(45), nullable=True)
@@ -180,7 +179,7 @@ def connect_to_db(app):
 
     # Configure to use our PostgreSQL database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///playfest'
-#    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
 

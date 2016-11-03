@@ -29,13 +29,13 @@ def load_coachella_artists():
     Artist.query.delete()
 
     # Read coachella_artist10.json file and insert artist data
-    with open('seed_data/coachella_artist10.json') as json_data:
+    with open('seed_data/coachella_artists10.json') as json_data:
         d = json.load(json_data)
 
-        for dict in d:
-            artist_name = d.get('artist')
-            artist_url = d.get('website_url', None)
-            artist_img = d.get('image_url', None)
+        for row in d:
+            artist_name = row.get('artist')
+            artist_url = row.get('website_url', None)
+            artist_img = row.get('image_url', None)
 
             artist = Artist(artist_name=artist_name,
                             artist_url=artist_url,
@@ -58,13 +58,13 @@ def load_coachella_stages():
     Stage.query.delete()
 
     # Read coachella_artist10.json file and insert stage data
-    with open('seed_data/coachella_artist10.json') as json_data:
+    with open('seed_data/coachella_artists10.json') as json_data:
         d = json.load(json_data)
 
         stages = []
 
-        for dict in d:
-            stage = d.get('stage', None)
+        for row in d:
+            stage = row.get('stage', None).strip()
 
             if (stage not in stages) and (stage is not None):
                 stages.append(stage)
@@ -73,7 +73,7 @@ def load_coachella_stages():
                 coachella_stage = Stage(stage_name=stage,
                                         festival_id=1)
 
-                db.session.add(artist)
+                db.session.add(coachella_stage)
 
             else:
                 pass
@@ -91,21 +91,25 @@ def load_festivalartists():
     FestivalArtist.query.delete()
 
     # Read coachella_artist10.json file and insert festival artist data
-    with open('seed_data/coachella_artist10.json') as json_data:
+    with open('seed_data/coachella_artists10.json') as json_data:
         d = json.load(json_data)
 
-        for dict in d:
-            artist_name = d.get('artist')            
-            day1 = d.get('day1', None).strip()
-            day2 = d.get('day2', None).strip()
-            stage = d.get('stage', None).strip()
+        for row in d:
+            # print row
+            artist_name = row.get('artist')
+            # print artist_name
+            day1 = row.get('day1', None).strip()
+            day2 = row.get('day2', None)
+            stage = row.get('stage', None).strip()
 
             # Is this necessary if just Coachella?
-            festival_info = Festival.query.filter_by(festival_name="Coachella 2016").first()
-            festival_id = festival_info.festival_id
+            # festival_info = Festival.query.filter_by(festival_name="Coachella 2016").first()
+            # fest_id = festival_info.festival_id
 
-            artist_info = Artist.query.filter_by(artist_name = artist_name).first()
+            artist_info = Artist.query.filter(Artist.artist_name.like(artist_name)).first()
+            # print artist_info
             artist_id = artist_info.artist_id
+            # print artist_id
 
             if day1 and (day1 is not None):
                 day1_playing = datetime.strptime(day1, '%A, %B %d, %Y')
@@ -113,17 +117,22 @@ def load_festivalartists():
                 day1_playing = None
 
             if day2 and (day2 is not None):
+                day2 = day2.strip()
                 day2_playing = datetime.strptime(day2, '%A, %B %d, %Y')
             else:
                 day2_playing = None
 
-            artist_festival = ArtistFestival(festival_id=festival_id,
+            stage_info = Stage.query.filter_by(stage_name=stage).first()
+            print stage_info
+            stage_id = stage_info.stage_id
+
+            festival_artist = FestivalArtist(festival_id=1,
                                              artist_id=artist_id,
                                              day1_playing=day1_playing,
                                              day2_playing=day2_playing,
-                                             stage=stage)
+                                             stage_id=stage_id)
 
-            db.session.add(artist)
+            db.session.add(festival_artist)
 
         db.session.commit()
 
