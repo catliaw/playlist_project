@@ -13,6 +13,7 @@ def load_festivals():
     print "Festival Info"
 
     coachella = Festival(festival_name="Coachella 2016",
+                         festival_route="coachella-2016",
                          festival_url="https://www.coachella.com/")
 
     db.session.add(coachella)
@@ -31,6 +32,8 @@ def load_coachella_artists():
 
     artist_info_list = []
 
+    # name_not_same = {}
+
     # initialize spotify as spotipy object
     spotify = spotipy.Spotify()
 
@@ -40,7 +43,7 @@ def load_coachella_artists():
 
         for row in d:
             name = row.get('artist')
-            print "Artist name from JSON: " + name
+            # print "Artist name from JSON: " + name
             url = row.get('website_url', None)
             img = row.get('image_url', None)
 
@@ -55,7 +58,7 @@ def load_coachella_artists():
             if not results['artists']['items']:
                 spotify_id = None
                 row['spotify_artist_id'] = spotify_id
-                print "New row with spot_id as None for", name, "\n", row, "\n\n"
+                # print "New row with spot_id as None for", name, "\n", row, "\n\n"
                 artist_info_list.append(row)
 
             elif name == "Bedouin":
@@ -68,6 +71,9 @@ def load_coachella_artists():
                 spotify_id = "2L6ltv7c16hTJuAGZEVjrR"
 
             elif name == "DJ EZ":
+                spotify_id = None
+
+            elif name == "Jesse Wright":
                 spotify_id = None
 
             elif name == "Lee K":
@@ -85,6 +91,9 @@ def load_coachella_artists():
             elif name == "Skin":
                 spotify_id = "4rGWYVkJUAeZn0zVVNpTWW"
 
+            elif name == "SOPHIE":
+                spotify_id = "5a2w2tgpLwv26BYJf2qYwu"
+
             # else... not an empty list
             # add spotify_artist_id to the db
             # add key:value pair into dictionary, to be added to be dictionary,
@@ -92,16 +101,22 @@ def load_coachella_artists():
             # calling the Spotify API when seeding my db.
             else:
                 artist_info = results['artists']['items'][0]
-                print "Artist name from Spotify:", artist_info['name'], "\n"
-                print artist_info
+                # print "Artist name from Spotify:", artist_info['name'], "\n"
+                # print artist_info
                 # adding Spotify Artist ID to variable
                 spotify_id = artist_info['id']
-                print spotify_id
+                # print spotify_id
 
                 # add a new key:value pair to add to row
                 row['spotify_artist_id'] = spotify_id
-                print "New row with spot_id for", name, "\n", row, "\n\n"
+                # print "New row with spot_id for", name, "\n", row, "\n\n"
                 artist_info_list.append(row)
+
+                # Check if artist name from Coachella list is the same
+                # as artist name from Spotify, if not add to
+                # not_the_same dictionary {coachella name: spotify name}
+                # if name.lower() != artist_info['name'].lower():
+                #     name_not_same[name] = artist_info['name']
 
             # make request from spotify --> probably function call
             artist = Artist(artist_name=name,
@@ -115,6 +130,8 @@ def load_coachella_artists():
         # Once we're done, we should commit our work
         db.session.commit()
         json_data.close
+
+        # print "Artist names that do not match:\n", name_not_same
 
     # Convert artist_info_list into JSON object, export to .json file
     with open('seed_data/coachella_with_spotify.json', 'w') as coachella_spotify:

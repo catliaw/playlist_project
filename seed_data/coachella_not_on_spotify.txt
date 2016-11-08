@@ -38,3 +38,13 @@ Artist name from Spotify: Patricio Borghetti
 
 Artist name from JSON: Satori
 Artist name from Spotify: Satori (NL) 
+
+Artist name from JSON: SOPHIE
+Artist name from Spotify: Sophie Strauss
+
+spotify:artist:5a2w2tgpLwv26BYJf2qYwu
+
+
+{u'Satori': u'Satori (NL)', u'Gallant ': u'Gallant', u'Nathaniel Rateliff and The Night Sweats': u'Nathaniel Rateliff & The Night Sweats', u'DMAs': u"DMA'S", u'St. Germain': u'St Germain', u'Gary Clark Jr': u'Gary Clark Jr.', u'Edward Sharpe and the Magnetic Zeros': u'Edward Sharpe & The Magnetic Zeros', u'SOPHIE': u'Sophie Strauss', u'Jesse Wright': u'Elad feat. Jesse Wright'}
+
+{u'Satori': u'Satori (NL)', u'Gallant ': u'Gallant', u'DMAs': u"DMA'S", u'St. Germain': u'St Germain', u'Gary Clark Jr': u'Gary Clark Jr.', u'Edward Sharpe and the Magnetic Zeros': u'Edward Sharpe & The Magnetic Zeros', u'Nathaniel Rateliff and The Night Sweats': u'Nathaniel Rateliff & The Night Sweats'}

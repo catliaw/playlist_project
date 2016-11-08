@@ -17,6 +17,7 @@ class Festival(db.Model):
 
     festival_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     festival_name = db.Column(db.String(50), nullable=False)
+    festival_route = db.Column(db.String(30), nullable=False)
     festival_url = db.Column(db.String(100))
 
     def __repr__(self):
