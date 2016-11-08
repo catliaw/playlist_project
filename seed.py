@@ -1,5 +1,6 @@
 from sqlalchemy import func
 import json
+import spotipy
 from datetime import datetime
 from server import app
 from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
@@ -28,24 +29,97 @@ def load_coachella_artists():
     # we won't be trying to add duplicate artists
     Artist.query.delete()
 
+    artist_info_list = []
+
+    # initialize spotify as spotipy object
+    spotify = spotipy.Spotify()
+
     # Read coachella_artist10.json file and insert artist data
     with open('seed_data/coachella_artists10.json') as json_data:
         d = json.load(json_data)
 
         for row in d:
-            artist_name = row.get('artist')
-            artist_url = row.get('website_url', None)
-            artist_img = row.get('image_url', None)
+            name = row.get('artist')
+            print "Artist name from JSON: " + name
+            url = row.get('website_url', None)
+            img = row.get('image_url', None)
 
-            artist = Artist(artist_name=artist_name,
-                            artist_url=artist_url,
-                            artist_img=artist_img)
+            results = spotify.search(q='artist:' + name, type='artist')
+
+            # This errors out if the list is not in Spotify API and list is empty
+            # artist_info = results['artists']['items'][0]
+
+            # if list is empty
+            # add to dictionary as None, which will be changed to null
+            # when turned into a JSON object
+            if not results['artists']['items']:
+                spotify_id = None
+                row['spotify_artist_id'] = spotify_id
+                print "New row with spot_id as None for", name, "\n", row, "\n\n"
+                artist_info_list.append(row)
+
+            elif name == "Bedouin":
+                spotify_id = "5bKdC6382t97Qnpvs81Rqx"
+
+            elif name == "DESPACIO":
+                spotify_id = None
+
+            elif name == "Dirty Mop":
+                spotify_id = "2L6ltv7c16hTJuAGZEVjrR"
+
+            elif name == "DJ EZ":
+                spotify_id = None
+
+            elif name == "Lee K":
+                spotify_id = None
+
+            elif name == "Lush":
+                spotify_id = "3ysp8GwsheDcBxP9q65lBg"
+
+            elif name == "NU":
+                spotify_id = None
+
+            elif name == "Patricio":
+                spotify_id = None
+
+            elif name == "Skin":
+                spotify_id = "4rGWYVkJUAeZn0zVVNpTWW"
+
+            # else... not an empty list
+            # add spotify_artist_id to the db
+            # add key:value pair into dictionary, to be added to be dictionary,
+            # which will be turned into a JSON object, so I do not need to keep
+            # calling the Spotify API when seeding my db.
+            else:
+                artist_info = results['artists']['items'][0]
+                print "Artist name from Spotify:", artist_info['name'], "\n"
+                print artist_info
+                # adding Spotify Artist ID to variable
+                spotify_id = artist_info['id']
+                print spotify_id
+
+                # add a new key:value pair to add to row
+                row['spotify_artist_id'] = spotify_id
+                print "New row with spot_id for", name, "\n", row, "\n\n"
+                artist_info_list.append(row)
+
+            # make request from spotify --> probably function call
+            artist = Artist(artist_name=name,
+                            artist_url=url,
+                            artist_img=img,
+                            spotify_artist_id=spotify_id)
 
             # We need to add to the session or it won't ever be stored
             db.session.add(artist)
 
         # Once we're done, we should commit our work
         db.session.commit()
+        json_data.close
+
+    # Convert artist_info_list into JSON object, export to .json file
+    with open('seed_data/coachella_with_spotify.json', 'w') as coachella_spotify:
+        json.dump(artist_info_list, coachella_spotify)
+        coachella_spotify.close
 
 
 def load_coachella_stages():
@@ -123,13 +197,13 @@ def load_festivalartists():
                 day2_playing = None
 
             stage_info = Stage.query.filter_by(stage_name=stage).first()
-            print stage_info
+            # print stage_info
             stage_id = stage_info.stage_id
 
             festival_artist = FestivalArtist(festival_id=1,
                                              artist_id=artist_id,
-                                             day1_playing=day1_playing,
-                                             day2_playing=day2_playing,
+                                             day1_at=day1_playing,
+                                             day2_at=day2_playing,
                                              stage_id=stage_id)
 
             db.session.add(festival_artist)

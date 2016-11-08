@@ -1,4 +1,3 @@
-import time
 from flask_sqlalchemy import SQLAlchemy
 
 # This is the connection to the PostgreSQL database; we're getting this through
@@ -18,7 +17,7 @@ class Festival(db.Model):
 
     festival_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     festival_name = db.Column(db.String(50), nullable=False)
-    festival_url = db.Column(db.String(100), nullable=True)
+    festival_url = db.Column(db.String(100))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -51,8 +50,8 @@ class FestivalArtist(db.Model):
     festival_artist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     festival_id = db.Column(db.Integer, db.ForeignKey('festivals.festival_id'))
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'))
-    day1_playing = db.Column(db.DateTime)
-    day2_playing = db.Column(db.DateTime)
+    day1_at = db.Column(db.DateTime)
+    day2_at = db.Column(db.DateTime)
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.stage_id'))
 
     # Define relationship to festival
@@ -66,9 +65,9 @@ class FestivalArtist(db.Model):
                              order_by=festival_artist_id))
 
     #Define relationship to stage
-    # stage = db.relationship("Stage",
-    #                         backref=db.backref("festivalartists",
-    #                         order_by=festival_artist_id))
+    stage = db.relationship("Stage",
+                            backref=db.backref("festivalartists",
+                            order_by=festival_artist_id))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -84,10 +83,13 @@ class Artist(db.Model):
     __tablename__ = "artists"
 
     artist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    artist_name = db.Column(db.String(64), nullable=False)
-    artist_url = db.Column(db.String(100), nullable=True)
-    artist_img = db.Column(db.String(300), nullable=True)
-    artist_bio = db.Column(db.String(300), nullable=True)
+    artist_name = db.Column(db.String(75), nullable=False)
+    artist_url = db.Column(db.String(100))
+    artist_img = db.Column(db.String(300))
+    artist_bio = db.Column(db.String(300))
+    spotify_artist_id = db.Column(db.String(50))
+    top10_updated_at = db.Column(db.DateTime)
+
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -102,8 +104,9 @@ class Song(db.Model):
     __tablename__ = "songs"
 
     song_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    song_name = db.Column(db.String(100), nullable=False)
+    song_name = db.Column(db.String(150), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'), nullable=False)
+    spotify_track_id = db.Column(db.String(50))
 
     playlists = db.relationship('Playlist',
                                secondary='playlist_songs',
@@ -143,8 +146,9 @@ class Playlist(db.Model):
 
     playlist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    playlist_name = db.Column(db.String(100), nullable=True)
-    spotify_playlist_url = db.Column(db.String(300), nullable=True)
+    playlist_name = db.Column(db.String(100))
+    spotify_playlist_id = db.Column(db.String(50))
+    spotify_playlist_url = db.Column(db.String(300))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -160,9 +164,10 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_email = db.Column(db.String(50), nullable=False)
-    user_password = db.Column(db.String(25), nullable=False)
-    user_fname = db.Column(db.String(45), nullable=True)
-    user_lname = db.Column(db.String(45), nullable=True)
+    # Large field for password when need to create hash for secure login
+    user_password = db.Column(db.String(500), nullable=False)
+    user_fname = db.Column(db.String(45))
+    user_lname = db.Column(db.String(45))
 
     def __repr__(self):
         """Provide helpful representation when printed."""

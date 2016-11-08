@@ -1,0 +1,40 @@
+Artist name from JSON: Bedouin
+Artist name from Spotify: Bedouin Soundclash
+
+spotify:artist:5bKdC6382t97Qnpvs81Rqx
+
+
+Artist name from JSON: DESPACIO
+Artist name from Spotify: Sevillanas Despacio 
+
+Artist name from JSON: Dirty Mop
+Artist name from Spotify: Dirty Mop Water 
+
+spotify:artist:2L6ltv7c16hTJuAGZEVjrR
+
+
+Artist name from JSON: DJ EZ
+Artist name from Spotify: Rob Base & DJ EZ Rock 
+
+Artist name from JSON: Lee K
+Artist name from Spotify: K-Lee 
+
+Artist name from JSON: Lush
+Artist name from Spotify: Lush & Simon 
+
+spotify:artist:3ysp8GwsheDcBxP9q65lBg
+
+Artist name from JSON: Nicole Moudaber b2b Skin
+
+nicole moudaber: spotify:artist:7ixDtqtITfqx5lZQGh5gKe
+
+skin: spotify:artist:4rGWYVkJUAeZn0zVVNpTWW
+
+Artist name from JSON: NU
+Artist name from Spotify: Nu Shooz 
+
+Artist name from JSON: Patricio
+Artist name from Spotify: Patricio Borghetti 
+
+Artist name from JSON: Satori
+Artist name from Spotify: Satori (NL) 
