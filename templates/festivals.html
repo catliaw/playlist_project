@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Festivals{% endblock %}
+
+{% block content %}
+  <h1>Festivals</h1>
+
+  {% if festivals %}
+    {% for festival in festivals %}
+      <p>
+        <a href="/festivals/{{ festival.festival_route }}">
+          {{ festival.festival_name }}
+        </a>
+      </p>
+    {% endfor %}
+  {% endif %}
+{% endblock %}

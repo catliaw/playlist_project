@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ festival_info.festival_name }}{% endblock %}
+
+{% block content %}
+  <h1>{{ festival_info.festival_name }}</h1>
+
+  {% if artist_list %}
+    <div class="lineup">
+
+      <h3>Lineup</h3>
+
+      <form id="playlist_submit">
+        <input id="playlist_submit_button" type="submit" value="Accio PLAYLIST!!!">
+        <br/><br/>
+
+        {% for artist in artist_list %}
+          {% if artist.artist.spotify_artist_id==None %}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ artist.artist.artist_name }} (Not on Spotify)
+            <br/>
+          {% else %}
+            <input class="artist_checkbox" type="checkbox" name="artist" value="{{ artist.artist.artist_name }}">
+              {{ artist.artist.artist_name }}
+            </input>
+            <br/>
+          {% endif %}
+        {% endfor %}
+      </form>
+
+    </div>
+  {% endif %}
+
+  <div class="playlist_preview">
+
+
+  </div>
+
+{% endblock %}
+

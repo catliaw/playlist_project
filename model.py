@@ -73,9 +73,9 @@ class FestivalArtist(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<FestivalArtist festival_artist_id=%s festival_id=%s artist_id=%>" % (self.festival_artist_id,
-                                                                                      self.festival_id,
-                                                                                      self.artist_id)
+        return "<FestivalArtist festival_artist_id=%s festival_id=%s artist_id=%s>" % (self.festival_artist_id,
+                                                                                       self.festival_id,
+                                                                                       self.artist_id)
 
 
 class Artist(db.Model):

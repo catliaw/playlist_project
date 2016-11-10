@@ -52,9 +52,8 @@ def load_coachella_artists():
             # This errors out if the list is not in Spotify API and list is empty
             # artist_info = results['artists']['items'][0]
 
-            # if list is empty
-            # add to dictionary as None, which will be changed to null
-            # when turned into a JSON object
+            # if list is empty, add to dictionary as None, 
+            # which will be changed to null when turned into a JSON object
             if not results['artists']['items']:
                 spotify_id = None
                 row['spotify_artist_id'] = spotify_id
@@ -94,8 +93,7 @@ def load_coachella_artists():
             elif name == "SOPHIE":
                 spotify_id = "5a2w2tgpLwv26BYJf2qYwu"
 
-            # else... not an empty list
-            # add spotify_artist_id to the db
+            # else... not an empty list, add spotify_artist_id to the db
             # add key:value pair into dictionary, to be added to be dictionary,
             # which will be turned into a JSON object, so I do not need to keep
             # calling the Spotify API when seeding my db.
