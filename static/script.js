@@ -19,10 +19,10 @@ $(function(){
         var artistsAdded = getCheckedArtists();
         console.log("artistsAdded", artistsAdded);
 
-        var artistsObject = {'artists': artistsAdded};
-        console.log("artistsObject", artistsObject);
+        // var artistsObject = {"artists[]": artistsAdded};
+        // console.log("artistsObject", artistsObject);
 
-        $.get("/preview", artistsObject, displayPlaylist);
+        $.post("/preview.json", {"artists": artistsAdded}, displayPlaylist);
     }
 
 

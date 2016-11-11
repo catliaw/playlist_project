@@ -116,7 +116,8 @@ def load_coachella_artists():
                 # if name.lower() != artist_info['name'].lower():
                 #     name_not_same[name] = artist_info['name']
 
-            # make request from spotify --> probably function call
+            #### make request from spotify --> probably function call ####
+
             artist = Artist(artist_name=name,
                             artist_url=url,
                             artist_img=img,

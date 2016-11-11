@@ -1,10 +1,12 @@
 import os
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.orm import joinedload
 from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
     Playlist, User, connect_to_db, db)
+import datetime
+import spotipy
 
 app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
@@ -44,15 +46,72 @@ def specific_festival(festival_route):
                                                      artist_list=artist_list)
 
 
-@app.route('/preview', methods=['GET'])
+@app.route('/preview.json', methods=['POST'])
 def playlist_review():
     """Display static preview of songs on playlist."""
 
-    artists = request.args.get("artists")
+    playlist_artists = request.form.getlist("artists[]")
+    print playlist_artists
 
-    print artists
+    spotify = spotipy.Spotify()
 
-    return artists
+    for artist in playlist_artists:
+        artist_info = Artist.query.filter_by(artist_name=artist).first()
+        artist_db_id = artist_info.artist_id
+        artist_spot_id = artist_info.spotify_artist_id
+        spotify_artist_uri = 'spotify:artist:' + artist_spot_id
+        recently_updated = artist_info.top10_updated_at
+        print artist_info.artist_name, "recently_updated", recently_updated
+        today = datetime.datetime.today()
+        print "today", today
+
+        if recently_updated is None:
+
+            new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
+            new_top10_tracks = new_top10_json['tracks']
+
+            for track in new_top10_tracks:
+                track_name = track['name']
+                track_id = track['id']
+
+                new_song = Song(song_name=track_name,
+                                artist_id=artist_db_id,
+                                spotify_track_id=track_id)
+
+                db.session.add(new_song)
+
+            artist_info.top10_updated_at = today
+            db.session.commit()
+
+        elif recently_updated < (today - datetime.timedelta(seconds=2)):
+            print "\n\n top10_updated_at has been updated!!!!!!"
+
+            new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
+            new_top10_tracks = new_top10_json['tracks']
+            # new_top10_tracks.append({'name': 'haaaaay', 'id': 'NOT AN ID HAHAHAHAHA'})
+
+            # current_db_songs = Song.query.filter_by(artist_id=artist_db_id).all()
+
+            for track in new_top10_tracks:
+                track_name = track['name']
+                track_id = track['id']
+
+                if not Song.query.filter_by(spotify_track_id=track_id).first():
+
+                    new_song = Song(song_name=track_name,
+                                    artist_id=artist_db_id,
+                                    spotify_track_id=track_id)
+
+                    db.session.add(new_song)
+
+            artist_info.top10_updated_at = today
+            db.session.commit()
+
+        top_songs = Song.query.filter_by(artist_id=artist_db_id).all()
+
+        print "\n\n", artist_info.artist_name, top_songs
+
+    return "woot"
 
 
 @app.route('/generate')
