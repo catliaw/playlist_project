@@ -28,6 +28,25 @@ $(function(){
 
     function displayPlaylist(data){
         console.log(data);
+
+        $("#playlist_preview").append("<ul>");
+
+        for (var key in data){
+            if (data.hasOwnProperty(key)) {
+
+                console.log(key + " - " + data[key]);
+
+                for (var innerKey in data[key]) {
+                    if (data[key].hasOwnProperty(innerKey)) {
+
+                        console.log(innerKey + " - " + data[key][innerKey]);
+
+                        $('#playlist_preview').append('<li data-trackid="' + data[key][innerKey] +'">' + key + ' - ' + innerKey + '</li>');
+                    }
+                }
+            }
+        }
+        $("#playlist_preview").append("</ul>");
     }
 
 

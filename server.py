@@ -55,6 +55,8 @@ def playlist_review():
 
     spotify = spotipy.Spotify()
 
+    playlist_json = {}
+
     for artist in playlist_artists:
         artist_info = Artist.query.filter_by(artist_name=artist).first()
         artist_db_id = artist_info.artist_id
@@ -83,7 +85,7 @@ def playlist_review():
             artist_info.top10_updated_at = today
             db.session.commit()
 
-        elif recently_updated < (today - datetime.timedelta(seconds=2)):
+        elif recently_updated < (today - datetime.timedelta(days=7)):
             print "\n\n top10_updated_at has been updated!!!!!!"
 
             new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
@@ -108,10 +110,26 @@ def playlist_review():
             db.session.commit()
 
         top_songs = Song.query.filter_by(artist_id=artist_db_id).all()
-
         print "\n\n", artist_info.artist_name, top_songs
 
-    return "woot"
+        if len(top_songs) >= 3:
+            random_songs = random.sample(top_songs, 3)
+            print "\n\nrandom_songs:", random_songs
+
+        else:
+            random_songs = top_songs
+
+        song_name_id = {}
+
+        for song in random_songs:
+            song_name_id[song.song_name] = song.spotify_track_id
+
+        playlist_json[artist_info.artist_name] = song_name_id
+        print "\n\nplaylist_json after adding", artist_info.artist_name, playlist_json
+
+    print "\n\nfinal playlist_json:", playlist_json
+
+    return jsonify(playlist_json)
 
 
 @app.route('/generate')
