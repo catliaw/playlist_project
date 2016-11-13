@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Register for Playfest{% endblock %}
+
+{% block content %}
+
+<h1>Register</h1>
+
+<form action='/register' method='POST'>
+  <label>Username: <input type='email' name='username'></label><br><br>
+  <label>First Name: <input type="text" name="first_name"></label><br><br>
+  <label>Last Name: <input type="text" name="last_name"></label><br><br>
+  <label>Password: <input type='password' name='password'></label><br><br>
+  <input type='submit' value='Submit'>
+</form>
+
+{% endblock %}

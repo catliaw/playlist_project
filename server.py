@@ -7,6 +7,7 @@ from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
     Playlist, User, connect_to_db, db)
 import datetime
 import spotipy
+import random
 
 app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
@@ -68,6 +69,10 @@ def playlist_review():
         print "today", today
 
         if recently_updated is None:
+            #### (john) should move this into a separate function so you don't repeat this below
+            #### design concern: might be beyond the scope of this project, but i would consider it
+            #### good design to separate components that update the database vs ones that retrieve
+            #### information. i.e. have a separate task or process that updates the database
 
             new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
             new_top10_tracks = new_top10_json['tracks']
@@ -112,6 +117,10 @@ def playlist_review():
         top_songs = Song.query.filter_by(artist_id=artist_db_id).all()
         print "\n\n", artist_info.artist_name, top_songs
 
+        #### (john) a cleaner way to do this might be to do
+        #### random.shuffle(top_songs)
+        #### random_songs = top_songs[0:3]
+
         if len(top_songs) >= 3:
             random_songs = random.sample(top_songs, 3)
             print "\n\nrandom_songs:", random_songs
@@ -143,28 +152,80 @@ def generate_playlist():
 def login_form():
     """Show form for login."""
 
-    pass
+    return render_template("login_form.html")
 
 
 @app.route('/login', methods=['POST'])
 def login_process():
     """Process login form."""
 
-    pass
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    search_user = db.session.query(User)
+
+    if search_user.filter_by(user_email=username, user_password=password).scalar() is not None:
+
+        login_user_id = db.session.query(User.user_id).filter_by(user_email=username, password=password).scalar()
+
+        session['login_user_id'] = login_user_id
+
+        flash("Logged in.")
+
+        return redirect(url_for('user_info', user_id=login_user_id))
+
+    else:
+
+        flash("Your password doesn't match our database!")
+
+        return redirect('/')
 
 
 @app.route('/register', methods=['GET'])
 def register_form():
-    """Show form for registration."""
+    """Show form for user signup."""
 
-    pass
+    return render_template("register_form.html")
 
 
 @app.route('/register', methods=['POST'])
 def register_process():
-    """Process registration form."""
+    """Processes register_form."""
 
-    pass
+    username = request.form.get('username')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    password = request.form.get('password')
+
+    search_user = db.session.query(User)
+
+    if search_user.filter_by(user_email=username).scalar() is None:
+
+        new_user = User(user_email=username, user_fname=first_name, user_lname=last_name, user_password=password)
+
+        db.session.add(new_user)
+
+        db.session.commit()
+
+        login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
+
+        session['login_user_id'] = login_user_id
+
+        flash("Thank you for signing up! You are logged in.")
+
+    # return redirect(url_for('user_info', user_id=login_user_id))
+    return redirect("/")
+
+
+@app.route('/logout')
+def logout_process():
+    """Processes logging out."""
+
+    del session['login_user_id']
+
+    flash("You have logged out!")
+
+    return redirect('/')
 
 
 @app.route('/account')
@@ -172,7 +233,6 @@ def account_info():
     """Display account information for user."""
 
     pass
-
 
 
 if __name__ == "__main__":

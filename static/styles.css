@@ -1,7 +1,17 @@
-.lineup {
-    width: 50%;
+section {
+    width: 100%;
+    margin: 0;
+    background-color: yellow;
 }
 
-.playlist_preview {
+.lineup-left {
     width: 50%;
+    float: left;
+    background-color: green;
+}
+
+.playlist-right{
+    width: 50%;
+    text-align:left;
+    background-color: red;
 }

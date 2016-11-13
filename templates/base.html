@@ -8,15 +8,24 @@
   
   <title>{% block title %}{% endblock %}</title>
 
-  <link rel="stylesheet" type="text/css"
-    href="{{ url_for('static', filename='styles.css') }}"></head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
 <body>
   <a href="/">Playfest</a>
   <a href="/festivals">Festivals</a>
-  <a href="/login">Login</a>
+  {% if "login_user_id" in session %}
+    <a href="/logout">Logout</a>
+  {% else %}
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+  {% endif %}
 
   <hr>
 
+  {% for flash in get_flashed_messages() %}
+    {{ flash }}
+  {% endfor %}
+  
   {% block content %}BODY CONTENT HERE{% endblock %}
 
   <script
