@@ -1,17 +1,28 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
 section {
-    width: 100%;
-    margin: 0;
-    background-color: yellow;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  overflow: auto;
+  /*background-color: yellow;*/
 }
 
 .lineup-left {
-    width: 50%;
-    float: left;
-    background-color: green;
+  width: 30%;
+  /*background-color: green;*/
+  float: left;
 }
 
-.playlist-right{
-    width: 50%;
-    text-align:left;
-    background-color: red;
+.playlist-right {
+  width: 70%;
+  text-align: left;
+  /*background-color: red;*/
+  float: left;
 }

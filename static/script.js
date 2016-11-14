@@ -13,23 +13,10 @@ $(function(){
     }
 
 
-    function submitCheckedArtists(event){
-        event.preventDefault();
-        
-        var artistsAdded = getCheckedArtists();
-        console.log("artistsAdded", artistsAdded);
-
-        // var artistsObject = {"artists[]": artistsAdded};
-        // console.log("artistsObject", artistsObject);
-
-        $.post("/preview.json", {"artists": artistsAdded}, displayPlaylist);
-    }
-
-
     function displayPlaylist(data){
         console.log(data);
 
-        $("#playlist_preview").append("<ul>");
+        $("#playlist_preview").html("<h3>Playlist Preview</h3><ol>");
 
         for (var key in data){
             if (data.hasOwnProperty(key)) {
@@ -46,10 +33,33 @@ $(function(){
                 }
             }
         }
-        $("#playlist_preview").append("</ul>");
+        $("#playlist_preview").append("</ol>");
+    }
+
+
+    function submitCheckedArtists(event){
+        event.preventDefault();
+        
+        var artistsAdded = getCheckedArtists();
+        console.log("artistsAdded", artistsAdded);
+
+        // var artistsObject = {"artists[]": artistsAdded};
+        // console.log("artistsObject", artistsObject);
+
+        $.post("/preview.json", {"artists": artistsAdded}, displayPlaylist);
     }
 
 
     $("#playlist_submit").on("submit", submitCheckedArtists);
+
+
+    function clearArtists(event){
+        event.preventDefault();
+        $('input[type=checkbox]').each(function() { 
+            this.checked = false; 
+        }); 
+    }
+
+    $("button#playlist_clear_button").on("click", clearArtists);
 
 });

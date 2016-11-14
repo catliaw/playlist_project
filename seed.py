@@ -1,6 +1,8 @@
 from sqlalchemy import func
 import json
 import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import os
 from datetime import datetime
 from server import app
 from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
@@ -48,8 +50,13 @@ def load_coachella_artists():
         "SOPHIE": "5a2w2tgpLwv26BYJf2qYwu"
     }
 
-    # initialize spotify as spotipy object
-    spotify = spotipy.Spotify()
+    # initialize Spotify Client Credentials object with app's client ID/secret
+    spotify_credentials = SpotifyClientCredentials(
+        client_id=os.environ['SPOTIPY_CLIENT_ID'],
+        client_secret=os.environ['SPOTIPY_CLIENT_SECRET'])
+
+    # initialize Spotify as Spotipy object
+    spotify = spotipy.Spotify(client_credentials_manager=spotify_credentials)
 
     # Read coachella_artist10.json file and insert artist data
     with open('seed_data/coachella_artists10.json') as json_data:
@@ -66,7 +73,7 @@ def load_coachella_artists():
             # This errors out if the list is not in Spotify API and list is empty
             # artist_info = results['artists']['items'][0]
 
-            # if list is empty, add to dictionary as None, 
+            # if list is empty, add to dictionary as None,
             # which will be changed to null when turned into a JSON object
             if not results['artists']['items']:
                 spotify_id = None

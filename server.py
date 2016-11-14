@@ -164,19 +164,20 @@ def login_process():
 
     if search_user.filter_by(user_email=username, user_password=password).scalar() is not None:
 
-        login_user_id = db.session.query(User.user_id).filter_by(user_email=username, password=password).scalar()
+        login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
 
         session['login_user_id'] = login_user_id
 
         flash("Logged in.")
 
-        return redirect(url_for('user_info', user_id=login_user_id))
+        # return redirect(url_for('user_info', user_id=login_user_id))
+        return redirect('/')
 
     else:
 
-        flash("Your password doesn't match our database!")
+        flash("Your username and password doesn't match our database!")
 
-        return redirect('/')
+        return redirect('/login')
 
 
 @app.route('/register', methods=['GET'])
