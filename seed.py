@@ -34,6 +34,20 @@ def load_coachella_artists():
 
     # name_not_same = {}
 
+    not_first_result = {
+        "Bedouin": "5bKdC6382t97Qnpvs81Rqx",
+        "DESPACIO": None,
+        "Dirty Mop": "2L6ltv7c16hTJuAGZEVjrR",
+        "DJ EZ": None,
+        "Jesse Wright": None,
+        "Lee K": None,
+        "Lush": "3ysp8GwsheDcBxP9q65lBg",
+        "NU": None,
+        "Patricio": None,
+        "Skin": "4rGWYVkJUAeZn0zVVNpTWW",
+        "SOPHIE": "5a2w2tgpLwv26BYJf2qYwu"
+    }
+
     # initialize spotify as spotipy object
     spotify = spotipy.Spotify()
 
@@ -60,38 +74,17 @@ def load_coachella_artists():
                 # print "New row with spot_id as None for", name, "\n", row, "\n\n"
                 artist_info_list.append(row)
 
-            elif name == "Bedouin":
-                spotify_id = "5bKdC6382t97Qnpvs81Rqx"
+            #### (john) you can replace this with a dictionary:
+            #### i.e. {"Bedouin": "5bKdC6382t97Qnpvs81Rqx",
+            ####       "DESPACIO": None}
+            #### etc
 
-            elif name == "DESPACIO":
-                spotify_id = None
+            # elif name == "Bedouin":
+            #     spotify_id = "5bKdC6382t97Qnpvs81Rqx"
+            # ...
 
-            elif name == "Dirty Mop":
-                spotify_id = "2L6ltv7c16hTJuAGZEVjrR"
-
-            elif name == "DJ EZ":
-                spotify_id = None
-
-            elif name == "Jesse Wright":
-                spotify_id = None
-
-            elif name == "Lee K":
-                spotify_id = None
-
-            elif name == "Lush":
-                spotify_id = "3ysp8GwsheDcBxP9q65lBg"
-
-            elif name == "NU":
-                spotify_id = None
-
-            elif name == "Patricio":
-                spotify_id = None
-
-            elif name == "Skin":
-                spotify_id = "4rGWYVkJUAeZn0zVVNpTWW"
-
-            elif name == "SOPHIE":
-                spotify_id = "5a2w2tgpLwv26BYJf2qYwu"
+            elif name in not_first_result:
+                spotify_id = not_first_result[name]
 
             # else... not an empty list, add spotify_artist_id to the db
             # add key:value pair into dictionary, to be added to be dictionary,
@@ -116,7 +109,7 @@ def load_coachella_artists():
                 # if name.lower() != artist_info['name'].lower():
                 #     name_not_same[name] = artist_info['name']
 
-            #### make request from spotify --> probably function call ####
+            #### TO DO!!!! make request from spotify --> probably function call ####
 
             artist = Artist(artist_name=name,
                             artist_url=url,

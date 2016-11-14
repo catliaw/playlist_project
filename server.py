@@ -97,8 +97,6 @@ def playlist_review():
             new_top10_tracks = new_top10_json['tracks']
             # new_top10_tracks.append({'name': 'haaaaay', 'id': 'NOT AN ID HAHAHAHAHA'})
 
-            # current_db_songs = Song.query.filter_by(artist_id=artist_db_id).all()
-
             for track in new_top10_tracks:
                 track_name = track['name']
                 track_id = track['id']
@@ -118,15 +116,15 @@ def playlist_review():
         print "\n\n", artist_info.artist_name, top_songs
 
         #### (john) a cleaner way to do this might be to do
-        #### random.shuffle(top_songs)
-        #### random_songs = top_songs[0:3]
+        random.shuffle(top_songs)
+        random_songs = top_songs[0:3]
 
-        if len(top_songs) >= 3:
-            random_songs = random.sample(top_songs, 3)
-            print "\n\nrandom_songs:", random_songs
+        # if len(top_songs) >= 3:
+        #     random_songs = random.sample(top_songs, 3)
+        #     print "\n\nrandom_songs:", random_songs
 
-        else:
-            random_songs = top_songs
+        # else:
+        #     random_songs = top_songs
 
         song_name_id = {}
 
