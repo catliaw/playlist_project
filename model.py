@@ -95,8 +95,10 @@ class Artist(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
+        encoded_name = self.artist_name.encode("utf-8")
+
         return "<Artist artist_id=%s artist_name=%s>" % (self.artist_id,
-                                                         self.artist_name)
+                                                         self.encoded_name)
 
 
 class Song(db.Model):
@@ -116,8 +118,10 @@ class Song(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
+        encoded_name = self.song_name.encode("utf-8")
+
         return "<Song song_id=%s song_name=%s>" % (self.song_id,
-                                                   self.song_name)
+                                                   encoded_name)
 
 
 class PlaylistSong(db.Model):
@@ -185,7 +189,7 @@ def connect_to_db(app):
 
     # Configure to use our PostgreSQL database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///playfest'
-    app.config['SQLALCHEMY_ECHO'] = True
+    # app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
 
