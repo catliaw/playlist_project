@@ -14,15 +14,19 @@ section {
   /*background-color: yellow;*/
 }
 
-.lineup-left {
+.lineup_left {
   width: 30%;
   /*background-color: green;*/
   float: left;
 }
 
-.playlist-right {
+.playlist_right {
   width: 70%;
   text-align: left;
   /*background-color: red;*/
   float: left;
+}
+
+.generate_div {
+  margin-top:10px;
 }
