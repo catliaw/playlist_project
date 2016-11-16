@@ -12,12 +12,9 @@
 </head>
 <body>
   <a href="/">Playfest</a>
-  <a href="/festivals">Festivals</a>
-  {% if "login_user_id" in session %}
+  {% if "user_spot_id" in session %}
+    <a href="/festivals">Festivals</a>
     <a href="/logout">Logout</a>
-  {% else %}
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
   {% endif %}
 
   <hr>
@@ -25,7 +22,7 @@
   {% for flash in get_flashed_messages() %}
     {{ flash }}
   {% endfor %}
-  
+
   {% block content %}BODY CONTENT HERE{% endblock %}
 
   <script

@@ -4,12 +4,13 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.orm import joinedload
 from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
-    Playlist, User, connect_to_db, db)
+    Playlist, User, connect_to_db, db, add_new_user)
 import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import os
 import random
+import api_helper
 
 app = Flask(__name__)
 
@@ -47,15 +48,10 @@ spotify_oauth = SpotifyOAuth(
 def index():
     """Homepage"""
 
-    return render_template("home.html")
+    spotify_authorize_url = spotify_oauth.get_authorize_url()
+    url = spotify_authorize_url + '&show_dialog=true'
 
-
-@app.route('/spotify-login')
-def spot_login():
-    url1 = spotify_oauth.get_authorize_url()
-    url = url1 + '&show_dialog=true'
-
-    return render_template('spotify_login.html', url=url)
+    return render_template("home.html", url=url)
 
 
 @app.route('/festivals')
@@ -201,93 +197,102 @@ def callback():
         token = str(token_info['access_token'])
         session['token'] = token
 
+        userid = api_helper.find_spotify_userid(token)
+        add_new_user(userid)
+        session['user_spot_id'] = userid
+        flash("Logged in.")
+
         refresh_token = token = str(token_info['refresh_token'])
         session['refresh_token'] = refresh_token
 
-        return redirect('/')
-
-    else:
-        return redirect('/')
-
-
-@app.route('/login', methods=['GET'])
-def login_form():
-    """Show form for login."""
-
-    spotify_authorize_url = spotify_oauth.get_authorize_url()
-    url = spotify_authorize_url + '&show_dialog=true'
-
-    return render_template("login_form.html", url=url)
-
-
-@app.route('/login', methods=['POST'])
-def login_process():
-    """Process login form."""
-
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    search_user = db.session.query(User)
-
-    if search_user.filter_by(user_email=username, user_password=password).scalar() is not None:
-
-        login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
-
-        session['login_user_id'] = login_user_id
-
-        flash("Logged in.")
-
         # return redirect(url_for('user_info', user_id=login_user_id))
+
         return redirect('/')
 
     else:
 
-        flash("Your username and password doesn't match our database!")
+        flash("Please login to Spotify!")
 
         return redirect('/login')
 
 
-@app.route('/register', methods=['GET'])
-def register_form():
-    """Show form for user signup."""
+# @app.route('/login', methods=['GET'])
+# def login_form():
+#     """Show form for login."""
 
-    return render_template("register_form.html")
+#     spotify_authorize_url = spotify_oauth.get_authorize_url()
+#     url = spotify_authorize_url + '&show_dialog=true'
+
+#     return render_template("login_form.html", url=url)
 
 
-@app.route('/register', methods=['POST'])
-def register_process():
-    """Processes register_form."""
+# @app.route('/login_callback')
+# def login_process():
+#     """Process login form."""
 
-    username = request.form.get('username')
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    password = request.form.get('password')
+#     username = request.form.get('username')
+#     password = request.form.get('password')
 
-    search_user = db.session.query(User)
+#     search_user = db.session.query(User)
 
-    if search_user.filter_by(user_email=username).scalar() is None:
+#     if search_user.filter_by(user_email=username, user_password=password).scalar() is not None:
 
-        new_user = User(user_email=username, user_fname=first_name, user_lname=last_name, user_password=password)
+#         login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
 
-        db.session.add(new_user)
+#         session['login_user_id'] = login_user_id
 
-        db.session.commit()
+#         flash("Logged in.")
 
-        login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
+#         return redirect('/')
 
-        session['login_user_id'] = login_user_id
+#     else:
 
-        flash("Thank you for signing up! You are logged in.")
+#         flash("Your username and password doesn't match our database!")
 
-    # return redirect(url_for('user_info', user_id=login_user_id))
-    return redirect("/")
+#         return redirect('/login')
+
+
+# @app.route('/register', methods=['GET'])
+# def register_form():
+#     """Show form for user signup."""
+
+#     return render_template("register_form.html")
+
+
+# @app.route('/register', methods=['POST'])
+# def register_process():
+#     """Processes register_form."""
+
+#     username = request.form.get('username')
+#     first_name = request.form.get('first_name')
+#     last_name = request.form.get('last_name')
+#     password = request.form.get('password')
+
+#     search_user = db.session.query(User)
+
+#     if search_user.filter_by(user_email=username).scalar() is None:
+
+#         new_user = User(user_email=username, user_fname=first_name, user_lname=last_name, user_password=password)
+
+#         db.session.add(new_user)
+
+#         db.session.commit()
+
+#         login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
+
+#         session['login_user_id'] = login_user_id
+
+#         flash("Thank you for signing up! You are logged in.")
+
+#     # return redirect(url_for('user_info', user_id=login_user_id))
+#     return redirect("/")
 
 
 @app.route('/logout')
 def logout_process():
     """Processes logging out."""
 
-    del session['login_user_id']
+    del session['user_spot_id']
 
     flash("You have logged out!")
 

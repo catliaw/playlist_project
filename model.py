@@ -98,7 +98,7 @@ class Artist(db.Model):
         encoded_name = self.artist_name.encode("utf-8")
 
         return "<Artist artist_id=%s artist_name=%s>" % (self.artist_id,
-                                                         self.encoded_name)
+                                                         encoded_name)
 
 
 class Song(db.Model):
@@ -185,6 +185,17 @@ class User(db.Model):
 
 ##############################################################################
 # Helper functions
+
+def add_new_user(spotify_userid):
+    """Check if user in DB; if not, add new user to DB."""
+
+    user_in_db = User.query.filter_by(user_spot_id=spotify_userid).first()
+
+    if user_in_db is None:
+        new_user = User(user_spot_id=spotify_userid)
+        db.session.add(new_user)
+        db.session.commit()
+
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
