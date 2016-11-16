@@ -292,7 +292,12 @@ def callback():
 def logout_process():
     """Processes logging out."""
 
-    del session['user_spot_id']
+    # del session['user_spot_id']
+    # del session['token_info']
+    # del session['token']
+    # del session['refresh_token']
+
+    session.clear()
 
     flash("You have logged out!")
 
