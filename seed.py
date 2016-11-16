@@ -55,8 +55,12 @@ def load_coachella_artists():
         client_id=os.environ['SPOTIPY_CLIENT_ID'],
         client_secret=os.environ['SPOTIPY_CLIENT_SECRET'])
 
+    # Getting Spotify access token
+
+    credential_token = spotify_credentials.get_access_token()
+
     # initialize Spotify as Spotipy object
-    spotify = spotipy.Spotify(client_credentials_manager=spotify_credentials)
+    spotify = spotipy.Spotify(auth=credential_token)
 
     # Read coachella_artist10.json file and insert artist data
     with open('seed_data/coachella_artists10.json') as json_data:

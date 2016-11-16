@@ -36,7 +36,7 @@ $(function(){
             }
         }
         $('#playlist_preview').append('</ul><div class="generate_div"><button id="generate_button" type="button">Generate Spotify Playlist</button></div>');
-        $("#generate_button").on("click", getTrackId);
+        $("#generate_button").on("click", generatePlaylist);
     }
 
 
@@ -66,13 +66,11 @@ $(function(){
     $("button#playlist_clear_button").on("click", clearArtists);
 
 
-    function getTrackId(event){
-        event.preventDefault();
-
+    function getTrackId(){
         var trackIdArray = [];
 
-        console.log('found a bunch of track ids(?)')
-        console.log($(".trackid").length);
+        // console.log('found a bunch of track ids(?)')
+        // console.log($(".trackid").length);
 
         $(".trackid").each(function() {
             trackIdArray.push($(this).attr("data-trackid"));
@@ -80,6 +78,15 @@ $(function(){
 
         console.log("getTrackId returns", trackIdArray);
         return trackIdArray;
+    }
+
+    function generatePlaylist(events){
+        event.preventDefault();
+
+        var tracksToAdd = getTrackId();
+        console.log("Tracks To Add:", tracksToAdd);
+
+        $.post("/generate", {"tracks": tracksToAdd});
     }
 
  

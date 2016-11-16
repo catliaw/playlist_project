@@ -7,9 +7,12 @@ from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
     Playlist, User, connect_to_db, db)
 import datetime
 import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+import os
 import random
 
 app = Flask(__name__)
+
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = os.environ["APP_SECRET_KEY"]
 
@@ -18,12 +21,41 @@ app.secret_key = os.environ["APP_SECRET_KEY"]
 app.jinja_env.undefined = StrictUndefined
 app.jinja_env.auto_reload = True
 
+# Grabs app's Spotify client ID & secret from my secrets.sh file
+spotify_client_id = os.environ['SPOTIPY_CLIENT_ID']
+spotify_client_secret = os.environ['SPOTIPY_CLIENT_SECRET']
+spotify_redirect_uri = os.environ['SPOTIPY_REDIRECT_URI']
+
+# The Spotify scope authorization for the user
+spotify_scope = 'playlist-modify-public'
+
+# Initialize Spotify Client Credentials object with app's client ID/secret
+client_credentials = SpotifyClientCredentials(
+    client_id=spotify_client_id,
+    client_secret=spotify_client_secret)
+
+spotify_oauth = SpotifyOAuth(
+    client_id=spotify_client_id,
+    client_secret=spotify_client_secret,
+    redirect_uri=spotify_redirect_uri,
+    state=None,
+    scope=spotify_scope,
+    cache_path=None)
+
 
 @app.route('/')
 def index():
     """Homepage"""
 
     return render_template("home.html")
+
+
+@app.route('/spotify-login')
+def spot_login():
+    url1 = spotify_oauth.get_authorize_url()
+    url = url1 + '&show_dialog=true'
+
+    return render_template('spotify_login.html', url=url)
 
 
 @app.route('/festivals')
@@ -54,9 +86,13 @@ def playlist_review():
     playlist_artists = request.form.getlist("artists[]")
     print playlist_artists
 
-    spotify = spotipy.Spotify()
-
     playlist_json = {}
+
+    # Get Spotify Client Credentials access token
+    credential_token = client_credentials.get_access_token()
+
+    # Initialize spotify_credentials as Spotipy object
+    spotify_credentials = spotipy.Spotify(auth=credential_token)
 
     for artist in playlist_artists:
         artist_info = Artist.query.filter_by(artist_name=artist).first()
@@ -74,7 +110,7 @@ def playlist_review():
             #### good design to separate components that update the database vs ones that retrieve
             #### information. i.e. have a separate task or process that updates the database
 
-            new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
+            new_top10_json = spotify_credentials.artist_top_tracks(spotify_artist_uri)
             new_top10_tracks = new_top10_json['tracks']
 
             for track in new_top10_tracks:
@@ -93,7 +129,7 @@ def playlist_review():
         elif recently_updated < (today - datetime.timedelta(days=7)):
             print "\n\n top10_updated_at has been updated!!!!!!"
 
-            new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
+            new_top10_json = spotify_credentials.artist_top_tracks(spotify_artist_uri)
             new_top10_tracks = new_top10_json['tracks']
             # new_top10_tracks.append({'name': 'haaaaay', 'id': 'NOT AN ID HAHAHAHAHA'})
 
@@ -139,18 +175,49 @@ def playlist_review():
     return jsonify(playlist_json)
 
 
-@app.route('/generate')
+@app.route('/generate', methods=['POST'])
 def generate_playlist():
-    """Create playlist and add songs to playlist."""
+    """Connect to Spotify, create playlist, and add songs to playlist."""
 
-    pass
+    tracks_to_add = request.form.getlist("tracks[]")
+
+    print "\n\n\nTracks to add:", tracks_to_add, "\n\n\n"
+
+    return redirect('/')
+
+
+@app.route('/spotify_callback')
+def callback():
+    """Authorizes the user and gets token."""
+
+    # Grade code from Spotify, exchange code for token and store in session.
+    code = request.args.get('code')
+
+    if code:
+        token_info = spotify_oauth.get_access_token(code)
+
+        session['token_info'] = token_info
+
+        token = str(token_info['access_token'])
+        session['token'] = token
+
+        refresh_token = token = str(token_info['refresh_token'])
+        session['refresh_token'] = refresh_token
+
+        return redirect('/')
+
+    else:
+        return redirect('/')
 
 
 @app.route('/login', methods=['GET'])
 def login_form():
     """Show form for login."""
 
-    return render_template("login_form.html")
+    spotify_authorize_url = spotify_oauth.get_authorize_url()
+    url = spotify_authorize_url + '&show_dialog=true'
+
+    return render_template("login_form.html", url=url)
 
 
 @app.route('/login', methods=['POST'])

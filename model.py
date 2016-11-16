@@ -168,17 +168,19 @@ class User(db.Model):
     __tablename__ = "users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_email = db.Column(db.String(50), nullable=False)
+    user_spot_id = db.Column(db.String(50), nullable=False)
     # Large field for password when need to create hash for secure login
-    user_password = db.Column(db.String(500), nullable=False)
-    user_fname = db.Column(db.String(45))
-    user_lname = db.Column(db.String(45))
+    # user_password = db.Column(db.String(500), nullable=False)
+    # user_fname = db.Column(db.String(45))
+    # user_lname = db.Column(db.String(45))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
+        encoded_spot_id = self.user_spot_id.encode("utf-8")
+
         return "<User user_id=%s user_email=%s>" % (self.user_id,
-                                                    self.user_email)
+                                                    encoded_spot_id)
 
 
 ##############################################################################
