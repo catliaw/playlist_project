@@ -213,7 +213,7 @@ def callback():
 
         flash("Please login to Spotify!")
 
-        return redirect('/login')
+        return redirect('/')
 
 
 # @app.route('/login', methods=['GET'])
