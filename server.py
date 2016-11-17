@@ -161,6 +161,8 @@ def playlist_review():
 
         song_name_id = {}
 
+        # {"artist1": {"song title 1": id1, "song title2": id2}, "artist2"}
+
         for song in random_songs:
             song_name_id[song.song_name] = song.spotify_track_id
 
@@ -246,23 +248,24 @@ def callback():
     code = request.args.get('code')
 
     if code:
-        token_info = spotify_oauth.get_access_token(code)
+        api_helper.process_login(code)
+        # token_info = spotify_oauth.get_access_token(code)
 
-        session['token_info'] = token_info
+        # session['token_info'] = token_info
 
-        token = str(token_info['access_token'])
-        session['token'] = token
+        # token = str(token_info['access_token'])
+        # session['token'] = token
 
-        spotify = spotipy.Spotify(auth=token)
+        # spotify = spotipy.Spotify(auth=token)
 
-        userid = api_helper.find_spotify_userid(spotify)
+        # userid = api_helper.find_spotify_userid(spotify)
 
-        add_new_user(userid)
-        session['user_spot_id'] = userid
-        flash("Logged in.")
+        # add_new_user(userid)
+        # session['user_spot_id'] = userid
+        # flash("Logged in.")
 
-        refresh_token = token = str(token_info['refresh_token'])
-        session['refresh_token'] = refresh_token
+        # refresh_token = token = str(token_info['refresh_token'])
+        # session['refresh_token'] = refresh_token
 
         # return redirect(url_for('user_info', user_id=login_user_id))
 
@@ -309,6 +312,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")
