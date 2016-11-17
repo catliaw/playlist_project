@@ -11,6 +11,7 @@ from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import spotipy.util as util
 import os
 import random
+import pprint
 
 spotify_client_id = os.environ['SPOTIPY_CLIENT_ID']
 spotify_client_secret = os.environ['SPOTIPY_CLIENT_SECRET']
@@ -42,25 +43,18 @@ def token_to_session(token_info):
     token = token_info['access_token']
     session['token'] = token
 
-    refresh_token = token_info['refresh_token']
-    session['refresh_token'] = refresh_token
-
     return token
 
 
-# def check_token_fresh():
-#     token = session['token']
-#     token_info = session['token_info']
-#     refresh_token = session['refresh_token']
+def check_token_valid():
+    token = session['token']
+    token_info = session['token_info']
 
-#     if not spotify_oauth._is_token_expired(token_info):
-#         spotify = spotipy.Spotify(auth=token)
+    if spotify_oauth._is_token_expired(token_info):
+        refresh_token = spotify_oauth._refresh_access_token(token_info['refresh_token'])
+        token = token_to_session(refresh_token)
 
-#     else:
-#         refresh_info = spotify_oauth._refresh_access_token(refresh_token)
-#         token_info = refresh_info[]
-
-    # return spotify
+    return token
 
 
 def find_spotify_userid(token):
@@ -89,3 +83,48 @@ def process_login(code):
     token = token_to_session(token_info)
     userid = find_spotify_userid(token)
     add_userid_db_session(userid)
+
+
+def create_spotify_playlist(spotify, userid, playlist_name):
+
+    # Create playlist. Need user id, name of playlist, public (=True default)
+    # spotify.user_playlist_create(user, name, public)
+    playlist_info = spotify.user_playlist_create(
+        user=userid,
+        name=playlist_name,
+        public=True)
+    print "\nCreated playlist!\n"
+    print "\nStart pretty printing playlist info\n"
+    pprint.pprint(playlist_info)
+    print "\nEnd pretty printing playlist info\n"
+
+    return playlist_info
+
+
+def add_tracks(spotify, playlist_info, userid, tracks_list):
+
+    playlist_id = playlist_info['id']
+    print "\nPlaylist Spotify ID", playlist_id, "\n"
+
+    playlist_url = playlist_info['external_urls']['spotify']
+    print "\nPlaylist URL", playlist_url, "\n"
+
+    # ADD SONGS
+    # spotify.user_playlist_add_tracks(
+    #     user, playlist_id, tracks, position=None)
+    print "\nAdding tracks into", playlist_info['name'], "\n"
+    added_results = spotify.user_playlist_add_tracks(
+        user=userid,
+        playlist_id=playlist_id,
+        tracks=tracks_list,
+        position=None)
+    print "\nStart pretty printing playlist info\n"
+    pprint.pprint(added_results)
+    print "\nEnd pretty printing playlist info\n"
+
+    return playlist_url
+
+
+
+
+

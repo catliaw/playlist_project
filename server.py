@@ -182,7 +182,9 @@ def generate_playlist():
     tracks_to_add = request.form.getlist("tracks[]")
     print "\n\n\nTracks to add:", tracks_to_add, "\n"
 
-    token = session['token']
+    # Check for valid access token, if not refresh access token
+    token = api_helper.check_token_valid()
+
     # Spotify user ID from session
     user_spot_id = session['user_spot_id']
 
@@ -197,40 +199,14 @@ def generate_playlist():
 
         spotify = spotipy.Spotify(auth=token)
 
-        # Create playlist. Need user id, name of playlist, public (=True default)
-        # spotify.user_playlist_create(user, name, public)
-        playlist = spotify.user_playlist_create(
-            user=user_spot_id,
-            name=playlist_name,
-            public=True)
-        print "\nCreated playlist!\n"
+        # Creating playlist
+        playlist_info = api_helper.create_spotify_playlist(
+            spotify, user_spot_id, playlist_name)
+        # Adding tracks, function returns playlist_url
+        playlist_url = api_helper.add_tracks(
+            spotify, playlist_info, user_spot_id, tracks_to_add)
 
-        print "\nStart pretty printing playlist info\n"
-        pprint.pprint(playlist)
-        print "\nEnd pretty printing playlist info\n"
-
-        playlist_id = playlist['id']
-        print "\nPlaylist Spotify ID", playlist_id, "\n"
-
-        playlist_url = playlist['external_urls']['spotify']
-        print "\nPlaylist URL", playlist_url, "\n"
-
-        # ADD SONGS
-        # spotify.user_playlist_add_tracks(user, playlist_id, tracks, position=None)
-        print "\nAdding tracks into", playlist['name'], "\n"
-
-        tracks_added_results = spotify.user_playlist_add_tracks(
-            user=user_spot_id,
-            playlist_id=playlist_id,
-            tracks=tracks_to_add,
-            position=None)
-        print "\nStart pretty printing playlist info\n"
-        pprint.pprint(tracks_added_results)
-        print "\nEnd pretty printing playlist info\n"
-
-        return_json = {}
-
-        return_json['url'] = playlist_url
+        return_json = {"url": playlist_url}
 
         return jsonify(return_json)
 
@@ -244,35 +220,18 @@ def generate_playlist():
 def callback():
     """Authorizes the user and gets token."""
 
-    # Grade code from Spotify, exchange code for token and store in session.
+    # Grade code from Spotify
     code = request.args.get('code')
 
+    # Exchange code for token and store in session
+    # Also find user's Spotify userid and store in session
     if code:
         api_helper.process_login(code)
-        # token_info = spotify_oauth.get_access_token(code)
-
-        # session['token_info'] = token_info
-
-        # token = str(token_info['access_token'])
-        # session['token'] = token
-
-        # spotify = spotipy.Spotify(auth=token)
-
-        # userid = api_helper.find_spotify_userid(spotify)
-
-        # add_new_user(userid)
-        # session['user_spot_id'] = userid
-        # flash("Logged in.")
-
-        # refresh_token = token = str(token_info['refresh_token'])
-        # session['refresh_token'] = refresh_token
-
-        # return redirect(url_for('user_info', user_id=login_user_id))
 
         return redirect('/')
 
+    # else redirect to homepage where can sign in.
     else:
-
         flash("Please login to Spotify!")
 
         return redirect('/')
@@ -281,11 +240,6 @@ def callback():
 @app.route('/logout')
 def logout_process():
     """Processes logging out and clears session."""
-
-    # del session['user_spot_id']
-    # del session['token_info']
-    # del session['token']
-    # del session['refresh_token']
 
     session.clear()
     print "\nSession was cleared!\n"
