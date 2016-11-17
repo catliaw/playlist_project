@@ -48,22 +48,19 @@ def token_to_session(token_info):
     return token
 
 
-def check_token_fresh():
-    token = session['token']
-    token_info = session['token_info']
-    refresh_token = session['refresh_token']
+# def check_token_fresh():
+#     token = session['token']
+#     token_info = session['token_info']
+#     refresh_token = session['refresh_token']
 
-    if not spotify_oauth._is_token_expired(token_info):
-        spotify = spotipy.Spotify(auth=token)
+#     if not spotify_oauth._is_token_expired(token_info):
+#         spotify = spotipy.Spotify(auth=token)
 
-    else:
-        refresh_info = spotify_oauth._refresh_access_token(refresh_token)
-        token_info = refresh_info[]
+#     else:
+#         refresh_info = spotify_oauth._refresh_access_token(refresh_token)
+#         token_info = refresh_info[]
 
-
-
-
-    return spotify
+    # return spotify
 
 
 def find_spotify_userid(token):
@@ -73,8 +70,6 @@ def find_spotify_userid(token):
 
     userid = spotify.current_user()['id']
     print "\n\nSpotify userid!", userid
-
-    userid = api_helper.find_spotify_userid(spotify)
 
     return userid
 
