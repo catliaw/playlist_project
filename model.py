@@ -190,11 +190,16 @@ def add_new_user(spotify_userid):
     """Check if user in DB; if not, add new user to DB."""
 
     user_in_db = User.query.filter_by(user_spot_id=spotify_userid).first()
+    print "\nChecking for", spotify_userid, "in the db!\n"
 
     if user_in_db is None:
+        print "\n", spotify_userid, "is not in the db!\n"
         new_user = User(user_spot_id=spotify_userid)
         db.session.add(new_user)
         db.session.commit()
+        print "\n", spotify_userid, "was added to the db!\n"
+    else:
+        print "\n", spotify_userid, "was already in the db!\n"
 
 
 def connect_to_db(app):

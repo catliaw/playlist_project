@@ -11,6 +11,7 @@ from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import os
 import random
 import api_helper
+import pprint
 
 app = Flask(__name__)
 
@@ -96,7 +97,7 @@ def playlist_review():
         artist_spot_id = artist_info.spotify_artist_id
         spotify_artist_uri = 'spotify:artist:' + artist_spot_id
         recently_updated = artist_info.top10_updated_at
-        print artist_info.artist_name, "recently_updated", recently_updated
+        print "\n\n", artist_info.artist_name, "recently_updated", recently_updated
         today = datetime.datetime.today()
         print "today", today
 
@@ -166,7 +167,7 @@ def playlist_review():
         playlist_json[artist_info.artist_name] = song_name_id
         print "\n\nplaylist_json after adding", artist_info.artist_name, playlist_json
 
-    print "\n\nfinal playlist_json:", playlist_json
+    print "\n\nfinal playlist_json:", playlist_json, "\n"
 
     return jsonify(playlist_json)
 
@@ -175,11 +176,66 @@ def playlist_review():
 def generate_playlist():
     """Connect to Spotify, create playlist, and add songs to playlist."""
 
+    # List of track IDs from AJAX
     tracks_to_add = request.form.getlist("tracks[]")
+    print "\n\n\nTracks to add:", tracks_to_add, "\n"
 
-    print "\n\n\nTracks to add:", tracks_to_add, "\n\n\n"
+    token = session['token']
+    # Spotify user ID from session
+    user_spot_id = session['user_spot_id']
 
-    return redirect('/')
+    # Need name of festival for name of playlist
+    festival_name = request.form.get("festival")
+    print "\nFestival Name:", festival_name, "\n"
+    playlist_name = festival_name + " Sample Playlist"
+    print playlist_name
+
+    if token:
+        print "\nToken valid!\n"
+
+        spotify = spotipy.Spotify(auth=token)
+
+        # Create playlist. Need user id, name of playlist, public (=True default)
+        # spotify.user_playlist_create(user, name, public)
+        playlist = spotify.user_playlist_create(
+            user=user_spot_id,
+            name=playlist_name,
+            public=True)
+        print "\nCreated playlist!\n"
+
+        print "\nStart pretty printing playlist info\n"
+        pprint.pprint(playlist)
+        print "\nEnd pretty printing playlist info\n"
+
+        playlist_id = playlist['id']
+        print "\nPlaylist Spotify ID", playlist_id, "\n"
+
+        playlist_url = playlist['external_urls']['spotify']
+        print "\nPlaylist URL", playlist_url, "\n"
+
+        # ADD SONGS
+        # spotify.user_playlist_add_tracks(user, playlist_id, tracks, position=None)
+        print "\nAdding tracks into", playlist['name'], "\n"
+
+        tracks_added_results = spotify.user_playlist_add_tracks(
+            user=user_spot_id,
+            playlist_id=playlist_id,
+            tracks=tracks_to_add,
+            position=None)
+        print "\nStart pretty printing playlist info\n"
+        pprint.pprint(tracks_added_results)
+        print "\nEnd pretty printing playlist info\n"
+
+        return_json = {}
+
+        return_json['url'] = playlist_url
+
+        return jsonify(return_json)
+
+    else:
+        print "\nCould not create playlist... :(\n"
+
+    return redirect("/")
 
 
 @app.route('/spotify_callback')
@@ -197,7 +253,10 @@ def callback():
         token = str(token_info['access_token'])
         session['token'] = token
 
-        userid = api_helper.find_spotify_userid(token)
+        spotify = spotipy.Spotify(auth=token)
+
+        userid = api_helper.find_spotify_userid(spotify)
+
         add_new_user(userid)
         session['user_spot_id'] = userid
         flash("Logged in.")
@@ -216,81 +275,9 @@ def callback():
         return redirect('/')
 
 
-# @app.route('/login', methods=['GET'])
-# def login_form():
-#     """Show form for login."""
-
-#     spotify_authorize_url = spotify_oauth.get_authorize_url()
-#     url = spotify_authorize_url + '&show_dialog=true'
-
-#     return render_template("login_form.html", url=url)
-
-
-# @app.route('/login_callback')
-# def login_process():
-#     """Process login form."""
-
-#     username = request.form.get('username')
-#     password = request.form.get('password')
-
-#     search_user = db.session.query(User)
-
-#     if search_user.filter_by(user_email=username, user_password=password).scalar() is not None:
-
-#         login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
-
-#         session['login_user_id'] = login_user_id
-
-#         flash("Logged in.")
-
-#         return redirect('/')
-
-#     else:
-
-#         flash("Your username and password doesn't match our database!")
-
-#         return redirect('/login')
-
-
-# @app.route('/register', methods=['GET'])
-# def register_form():
-#     """Show form for user signup."""
-
-#     return render_template("register_form.html")
-
-
-# @app.route('/register', methods=['POST'])
-# def register_process():
-#     """Processes register_form."""
-
-#     username = request.form.get('username')
-#     first_name = request.form.get('first_name')
-#     last_name = request.form.get('last_name')
-#     password = request.form.get('password')
-
-#     search_user = db.session.query(User)
-
-#     if search_user.filter_by(user_email=username).scalar() is None:
-
-#         new_user = User(user_email=username, user_fname=first_name, user_lname=last_name, user_password=password)
-
-#         db.session.add(new_user)
-
-#         db.session.commit()
-
-#         login_user_id = db.session.query(User.user_id).filter_by(user_email=username, user_password=password).scalar()
-
-#         session['login_user_id'] = login_user_id
-
-#         flash("Thank you for signing up! You are logged in.")
-
-#     # return redirect(url_for('user_info', user_id=login_user_id))
-#     return redirect("/")
-
-
 @app.route('/logout')
 def logout_process():
-    """Processes logging out."""
+    """Processes logging out and clears session."""
 
     # del session['user_spot_id']
     # del session['token_info']
@@ -298,6 +285,7 @@ def logout_process():
     # del session['refresh_token']
 
     session.clear()
+    print "\nSession was cleared!\n"
 
     flash("You have logged out!")
 
@@ -321,6 +309,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")

@@ -80,14 +80,30 @@ $(function(){
         return trackIdArray;
     }
 
-    function generatePlaylist(events){
+
+    function getFestivalName() {
+        var festivalName = $("h1").text();
+
+        return festivalName;
+    }
+
+
+    function generatePlaylist(event) {
         event.preventDefault();
 
         var tracksToAdd = getTrackId();
         console.log("Tracks To Add:", tracksToAdd);
 
-        $.post("/generate", {"tracks": tracksToAdd});
+        var festivalName = getFestivalName();
+        console.log("Name of Festival:", festivalName);
+
+        $.post("/generate", {"tracks": tracksToAdd, "festival": festivalName}, playlistNewTab);
     }
 
+    function playlistNewTab(url) {
+        console.log("Playlist Spotify URL:", url);
+        // location.replace(url);
+        window.open(url, "_blank");
+    }
  
 });

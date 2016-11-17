@@ -13,10 +13,18 @@ import os
 import random
 
 
-def find_spotify_userid(token):
-    """Find user ID of user logged in."""
+# def initialize_spotify(token):
 
-    spotify = spotipy.Spotify(auth=token)
+#     if token:
+#         spotify = spotipy.Spotify(auth=token)
+
+    
+
+#     return spotify
+
+
+def find_spotify_userid(spotify):
+    """Find user ID of user logged in."""
 
     userid = spotify.current_user()['id']
     print "\n\nSpotify userid!", userid
