@@ -1,15 +1,8 @@
 import os
-from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, redirect, session, jsonify
-from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy.orm import joinedload
-from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
-    Playlist, User, connect_to_db, db, add_new_user)
-import datetime
+from flask import flash, session
+from model import add_new_user
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
-import spotipy.util as util
-import os
+from spotipy.oauth2 import SpotifyOAuth
 import random
 import pprint
 
@@ -113,14 +106,11 @@ def add_tracks(spotify, playlist_info, userid, tracks_list):
     # spotify.user_playlist_add_tracks(
     #     user, playlist_id, tracks, position=None)
     print "\nAdding tracks into", playlist_info['name'], "\n"
-    added_results = spotify.user_playlist_add_tracks(
+    spotify.user_playlist_add_tracks(
         user=userid,
         playlist_id=playlist_id,
         tracks=tracks_list,
         position=None)
-    print "\nStart pretty printing playlist info\n"
-    pprint.pprint(added_results)
-    print "\nEnd pretty printing playlist info\n"
 
     return playlist_url
 

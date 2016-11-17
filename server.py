@@ -8,7 +8,6 @@ from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
 import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
-import os
 import random
 import api_helper
 import pprint
@@ -206,14 +205,14 @@ def generate_playlist():
         playlist_url = api_helper.add_tracks(
             spotify, playlist_info, user_spot_id, tracks_to_add)
 
-        return_json = {"url": playlist_url}
+        url_info = {"url": playlist_url}
 
-        return jsonify(return_json)
+        return jsonify(url_info)
 
     else:
         print "\nCould not create playlist... :(\n"
 
-    return redirect("/")
+        return redirect("/")
 
 
 @app.route('/spotify_callback')
