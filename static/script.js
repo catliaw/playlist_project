@@ -100,8 +100,9 @@ $(function(){
         $.post("/generate", {"tracks": tracksToAdd, "festival": festivalName}, playlistNewTab);
     }
 
-    function playlistNewTab(url) {
-        console.log("Playlist Spotify URL:", url);
+    function playlistNewTab(data) {
+        console.log("Playlist Spotify URL:", data);
+        var url = data['url'];
         // location.replace(url);
         window.open(url, "_blank");
     }

@@ -10,23 +10,31 @@
     <div class="lineup_left">
       <div class="lineup_inner">
         <h3>Lineup</h3>
-
+        <p>
+          Filter by Day:
+          <br/>
+          <a href="">All</a>
+          <a href="">Friday</a>
+          <a href="">Saturday</a>
+          <a href="">Sunday</a>
+        </p>
         <form id="playlist_submit">
           <input id="playlist_submit_button" type="submit" value="Preview Playlist">
           <button id="playlist_clear_button" type="button">Clear</button>
           <br/><br/>
-
-          {% for artist in artist_list %}
-            {% if artist.artist.spotify_artist_id==None %}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ artist.artist.artist_name }} (Not on Spotify)
-              <br/>
-            {% else %}
-              <input class="artist_checkbox" type="checkbox" name="artist" value="{{ artist.artist.artist_name }}">
-                {{ artist.artist.artist_name }}
-              </input>
-              <br/>
-            {% endif %}
-          {% endfor %}
+          <label class="artist_lineup">
+            {% for artist in artist_list %}
+              {% if artist.artist.spotify_artist_id==None %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ artist.artist.artist_name }} (Not on Spotify)
+                <br/>
+              {% else %}
+                <input class="artist_checkbox" type="checkbox" name="artist" value="{{ artist.artist.artist_name }}">
+                  {{ artist.artist.artist_name }}
+                </input>
+                <br/>
+              {% endif %}
+            {% endfor %}
+        </label>
         </form>
       </div>
     </div>
