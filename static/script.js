@@ -18,7 +18,22 @@ $(function(){
     function displayPlaylist(data){
         console.log(data);
 
-        $("#playlist_preview").html("<h3>Playlist Preview</h3><ul>");
+        var topHTML = "<h3>Playlist Preview</h3>" +
+            "<ul>";
+
+        var bottomHTML = '</ul>' +
+            '<form>' +
+            '<p>Playlist name: ' +
+            '<input id="playlist_name" type="text" name="playlist_name"></p>' +
+            '<div class="generate_div">' +
+            '<button id="generate_button" type="button">' +
+            'Generate Spotify Playlist</button>' +
+            '</div>' +
+            '</form>';
+
+        console.log(bottomHTML)
+
+        $("#playlist_preview").html(topHTML);
 
         for (var key in data){
             if (data.hasOwnProperty(key)) {
@@ -30,12 +45,16 @@ $(function(){
 
                         console.log(innerKey + " - " + data[key][innerKey]);
 
-                        $('#playlist_preview').append('<li class="trackid" data-trackid="' + data[key][innerKey] +'">' + key + ' - ' + innerKey + '</li>');
+                        var listHTML = '<li class="trackid" data-trackid="' +
+                            data[key][innerKey] + '">' + key + ' - ' +
+                            innerKey + '</li>';
+
+                        $('#playlist_preview').append(listHTML);
                     }
                 }
             }
         }
-        $('#playlist_preview').append('</ul><div class="generate_div"><button id="generate_button" type="button">Generate Spotify Playlist</button></div>');
+        $('#playlist_preview').append(bottomHTML);
         $("#generate_button").on("click", generatePlaylist);
     }
 
@@ -81,10 +100,10 @@ $(function(){
     }
 
 
-    function getFestivalName() {
-        var festivalName = $("h1").text();
+    function getPlaylistName() {
+        var playlistName = $("input#playlist_name").val();
 
-        return festivalName;
+        return playlistName;
     }
 
 
@@ -94,10 +113,10 @@ $(function(){
         var tracksToAdd = getTrackId();
         console.log("Tracks To Add:", tracksToAdd);
 
-        var festivalName = getFestivalName();
-        console.log("Name of Festival:", festivalName);
+        var playlistName = getPlaylistName();
+        console.log("Name of Playlist:", playlistName);
 
-        $.post("/generate", {"tracks": tracksToAdd, "festival": festivalName}, playlistNewTab);
+        $.post("/generate", {"tracks": tracksToAdd, "playlist_name": playlistName}, playlistNewTab);
     }
 
     function playlistNewTab(data) {

@@ -10,6 +10,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import random
 import api_helper
+import helper_func
 import pprint
 
 app = Flask(__name__)
@@ -188,10 +189,11 @@ def generate_playlist():
     user_spot_id = session['user_spot_id']
 
     # Need name of festival for name of playlist
-    festival_name = request.form.get("festival")
-    print "\nFestival Name:", festival_name, "\n"
-    playlist_name = festival_name + " Sample Playlist"
-    print playlist_name
+    user_playlist_name = request.form.get("playlist_name")
+    print "\nUser Playlist Name:", user_playlist_name, "\n"
+
+    playlist_name = helper_func.create_playlist_name(user_playlist_name)
+    print "\nFinal Playlist Name:", playlist_name, "\n"
 
     if token:
         print "\nToken valid!\n"
