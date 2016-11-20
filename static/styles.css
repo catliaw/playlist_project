@@ -6,27 +6,36 @@ html {
   box-sizing: border-box;
 }
 
-section {
-  width: 100%;
-  margin: 0 auto;
-  padding: 0;
-  overflow: auto;
-  /*background-color: yellow;*/
-}
-
-.lineup_left {
-  width: 30%;
-  /*background-color: green;*/
-  float: left;
-}
-
-.playlist_right {
-  width: 70%;
-  text-align: left;
-  /*background-color: red;*/
-  float: left;
-}
-
 .generate_div {
   margin-top:10px;
+}
+
+.in-spotify {
+  /*border: 1px solid #c5c5c5;*/
+  /*background: #f6f6f6;*/
+  font-weight: normal;
+  color: #454545;
+  text-decoration: none;
+  height: 50px;
+  vertical-align: middle;
+}
+
+.not-on-spotify {
+  /*border: 1px solid #c5c5c5;*/
+  /*background: #ffffff;*/
+  font-weight: normal;
+  color: #999999;
+  text-decoration: none;
+  height: 50px;
+  vertical-align: middle;
+}
+
+.preview_table {
+  border: 1px solid #c5c5c5;
+  min-height: 50px;
+  margin-bottom:10px;
+}
+
+.preview_list > ul {
+  list-style-position: outside;
 }

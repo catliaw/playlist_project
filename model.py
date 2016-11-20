@@ -19,6 +19,10 @@ class Festival(db.Model):
     festival_name = db.Column(db.String(50), nullable=False)
     festival_route = db.Column(db.String(30), nullable=False)
     festival_url = db.Column(db.String(100))
+    # weekend1_start_at = db.Column(db.DateTime)
+    # weekend1_range = db.Column(db.Integer)
+    # weekend2_start_at = db.Column(db.DateTime)
+    # weekend2_range = db.Column(db.Integer)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -51,6 +55,8 @@ class FestivalArtist(db.Model):
     festival_artist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     festival_id = db.Column(db.Integer, db.ForeignKey('festivals.festival_id'))
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'))
+    # weekend1_at = db.Column(db.DateTime)
+    # weekend2_at = db.Column(db.DateTime)
     day1_at = db.Column(db.DateTime)
     day2_at = db.Column(db.DateTime)
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.stage_id'))

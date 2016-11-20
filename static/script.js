@@ -31,7 +31,7 @@ $(function(){
             '</div>' +
             '</form>';
 
-        console.log(bottomHTML)
+        console.log(bottomHTML);
 
         $("#playlist_preview").html(topHTML);
 
@@ -72,7 +72,7 @@ $(function(){
     }
 
 
-    $("#playlist_submit").on("submit", submitCheckedArtists);
+    $("#playlist_submit").on("click", submitCheckedArtists);
 
 
     function clearArtists(event){
@@ -82,7 +82,7 @@ $(function(){
         });
     }
 
-    $("button#playlist_clear_button").on("click", clearArtists);
+    $("button#playlist_clear").on("click", clearArtists);
 
 
     function getTrackId(){

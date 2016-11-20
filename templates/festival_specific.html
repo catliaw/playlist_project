@@ -5,46 +5,41 @@
 {% block content %}
   <h1>{{ festival_info.festival_name }}</h1>
 
-  <section>
-    {% if artist_list %}
-    <div class="lineup_left">
-      <div class="lineup_inner">
-        <h3>Lineup</h3>
-        <p>
-          Filter by Day:
-          <br/>
-          <a id="view_all" href="">All</a>
-          <a id="view_fri" href="">Friday</a>
-          <a id="view_sat" href="">Saturday</a>
-          <a id="view_sun" href="">Sunday</a>
-        </p>
-        <form id="playlist_submit">
-          <input id="playlist_submit_button" type="submit" value="Preview Playlist">
-          <button id="playlist_clear_button" type="button">Clear</button>
-          <br/><br/>
-          <label class="artist_lineup">
-            {% for artist in artist_list %}
-              {% if artist.artist.spotify_artist_id==None %}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ artist.artist.artist_name }} (Not on Spotify)
-                <br/>
-              {% else %}
-                <input class="artist_checkbox" type="checkbox" name="artist" value="{{ artist.artist.artist_name }}">
-                  {{ artist.artist.artist_name }}
-                </input>
-                <br/>
-              {% endif %}
-            {% endfor %}
-        </label>
-        </form>
+  {% if artist_list %}
+  <div class="row">
+    <div class="col-sm-8">
+      <h3>Lineup</h3>
+      <div class="row">
+        {% for artist in artist_list %}
+          {% if artist.artist.spotify_artist_id==None %}
+            <div class="col-sm-3 not-on-spotify">
+              <span>{{ artist.artist.artist_name }}<br/>(Not on Spotify)</span>
+            </div>
+          {% else %}
+            <div class="col-sm-3 in-spotify">
+              <input class="artist_checkbox" type="checkbox" name="artist" value="{{ artist.artist.artist_name }}">
+                {{ artist.artist.artist_name }}
+              </input>
+            </div>
+          {% endif %}
+        {% endfor %}
       </div>
     </div>
-    {% endif %}
 
-    <div class="playlist_right">
-      <div class="playlist_inner" id="playlist_preview">
+    <div class="col-sm-4">
+      <h3>Add to playlist</h3>
+      <div class="preview_table">
+      </div>
+      <button id="playlist_submit" type="button">Preview Playlist</button>
+      <button id="playlist_clear" type="button">Clear</button>
+    </div>
+
+    <div class="col-sm-4">
+      <div class="preview_list" id="playlist_preview">
       </div>
     </div>
-  </section>
+  </div>
+  {% endif %}
 
 {% endblock %}
 
