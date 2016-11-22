@@ -12,19 +12,23 @@
 
 </head>
 <body>
-  <a href="/">Playfest</a>
-  {% if "user_spot_id" in session %}
-    <a href="/festivals">Festivals</a>
-    <a href="/logout">Logout</a>
-  {% endif %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <a href="/">Playfest</a>
+        {% if "user_spot_id" in session %}
+          <a href="/festivals">Festivals</a>
+          <a href="/logout">Logout</a>
+        {% endif %}
+        <hr>
+        {% for flash in get_flashed_messages() %}
+          {{ flash }}
+        {% endfor %}
+      </div>
+    </div>
 
-  <hr>
-
-  {% for flash in get_flashed_messages() %}
-    {{ flash }}
-  {% endfor %}
-
-  <div class="container">{% block content %}BODY CONTENT HERE{% endblock %}</div>
+  {% block content %}BODY CONTENT HERE{% endblock %}
+  </div>
 
   <script
     src="https://code.jquery.com/jquery-3.1.1.min.js"

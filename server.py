@@ -72,8 +72,38 @@ def specific_festival(festival_route):
 
     artist_list = festival_info.festivalartists
 
+    artist_info = []
+
+    for artist in artist_list:
+        name = artist.artist.artist_name
+        print "\n\nName of artist:", name
+        spotify_id = artist.artist.spotify_artist_id
+        print "\nSpotify ID:", spotify_id
+        day1_datetime = artist.day1_at
+        print "\nDatetime:", day1_datetime
+        dow_num = datetime.datetime.isoweekday(day1_datetime)
+        # day1_dow = helper_func.datetime_to_dow(day1_datetime)
+        # print "\nDay of the week:", day1_dow
+        stage = artist.stage.stage_name
+        print "\nStage:", stage, "\n"
+
+        artist_info.append({
+            "artist_name": name,
+            "spotify_artist_id": spotify_id,
+            "playing_on": dow_num,
+            "stage": stage
+            })
+        # print "\nArtist Info List:", artist_info, "\n"
+
+    print "\nFinal Artist Info List:", artist_info, "\n"
+    print "\nLength of Artist Info List:", len(artist_info), "\n\n"
+
     return render_template("festival_specific.html", festival_info=festival_info,
-                                                     artist_list=artist_list)
+                                                     artist_info=artist_info,
+                                                     length=len(artist_info))
+
+    # return render_template("festival_specific.html", festival_info=festival_info,
+    #                                                  artist_list=artist_list)
 
 
 @app.route('/preview.json', methods=['POST'])
@@ -267,6 +297,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(host="0.0.0.0")
