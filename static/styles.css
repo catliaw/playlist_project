@@ -25,10 +25,14 @@ html {
   vertical-align: top;
 }
 
-.preview_table {
+.artist_preview_table {
   border: 1px solid #c5c5c5;
   min-height: 50px;
   margin-bottom:10px;
+}
+
+#artist_preview_list {
+  margin-bottom: 10px;
 }
 
 .preview_list > ul {

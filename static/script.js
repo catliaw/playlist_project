@@ -11,34 +11,43 @@ $(function(){
         // console.log("Done custom attributes!");
     }
 
+    function loadCheckedArtists(array, artist, i){
+        if (typeof array !== 'undefined' && array.length > 0) {
+            for (var index=0; index < artistsToAdd.length; index++) {
+                if (artistsToAdd[index] === artist) {
+                    console.log(artist);
+                    console.log(i);
+                    $("#box_input"+i).prop('checked', true);
+                }
+            }
+        }
+    }
+
 
     function loadLineup(data, index){
 
-        for (var i=index; i < data.length; i++){
-            // console.log("Start Javascript for", data[i].artist_name);
-            var boxClass, disabledCheck, spotifyString;
+        for (var i=index; i < data.length; i++) {
+            var boxClass, disabledCheck, onSpotifyString;
+            var artistName = data[i].artist_name;
+
             if (data[i].spotify_artist_id === null){
-                // console.log("Start custom attributes!");
                 boxClass = "not-on-spotify";
                 disabledCheck = true;
-                spotifyString = '<br/>(Not on Spotify)';
-                // console.log("Done with Not in Spotify for", data[i].artist_name);
+                onSpotifyString = '<br/>(Not on Spotify)';
             } else {
                 boxClass = "in-spotify";
                 disabledCheck = false;
-                spotifyString = '';
-                // $("#box_input"+i).after().html(data[i].artist_name);
-                // console.log("Done with In Spotify for", data[i].artist_name);
+                onSpotifyString = '';
             }
+
             clearCustom(i);                
             $("#box_label"+i).parent().addClass(boxClass);
-            // console.log(data[i].playing_on);
             $("#box_label"+i).parent().attr("data-day", data[i].playing_on);
             $("#box_label"+i).parent().attr("data-stage", data[i].stage);
-            $("#box_input"+i).val(data[i].artist_name);
+            $("#box_input"+i).val(artistName);
             $("#box_input"+i).attr("disabled", disabledCheck);
-            $("#box_span"+i).html(data[i].artist_name + spotifyString);
-
+            $("#box_span"+i).html(artistName + onSpotifyString);
+            loadCheckedArtists(artistsToAdd, artistName, i);
         }
     }
 
@@ -138,17 +147,17 @@ $(function(){
     $('#sort_by_stage').on('click', loadSortByStage);
 
 
-    function getCheckedArtists(){
+    // function getCheckedArtists(){
 
-        var artistsArray = [];
+    //     // var artistsArray = [];
 
-        $("input.artist_checkbox:checkbox[name=artist]:checked").each(function() {
-            artistsArray.push($(this).val());
-        });
+    //     // $("input.artist_checkbox:checkbox[name=artist]:checked").each(function() {
+    //     //     artistsArray.push($(this).val());
+    //     // });
 
-        console.log("getCheckedArtists returns", artistsArray);
-        return artistsArray;
-    }
+    //     // console.log("getCheckedArtists returns", artistsArray);
+    //     // return artistsArray;
+    // }
 
 
     function displayPlaylist(data){
@@ -196,19 +205,17 @@ $(function(){
 
 
     function submitCheckedArtists(event){
+        console.log("Click!")
         event.preventDefault();
-        
-        var artistsAdded = getCheckedArtists();
-        console.log("artistsAdded", artistsAdded);
-
-        // var artistsObject = {"artists[]": artistsAdded};
-        // console.log("artistsObject", artistsObject);
-
-        $.post("/preview.json", {"artists": artistsAdded}, displayPlaylist);
+        console.log("event prevented!")
+        var artistsToSubmit = artistsToAdd;
+        console.log("State of artists to add:", artistsToAdd)
+        console.log("Artist to Submit:", artistsToSubmit);
+        if (typeof artistsToSubmit !== 'undefined' && artistsToSubmit.length > 0) {
+            $.post("/preview.json", {"artists": artistsToSubmit}, displayPlaylist);
+            console.log("post!")
+        }
     }
-
-
-    $("#playlist_submit").on("click", submitCheckedArtists);
 
 
     function clearArtists(){
@@ -223,16 +230,13 @@ $(function(){
         $('input[type=checkbox]').each(function() {
             this.checked = false;
         });
+        $('#artist_preview_list').remove();
+        artistsToAdd = [];
     }
-
-    $("button#playlist_clear").on("click", clearArtistsEvent);
 
 
     function getTrackId(){
         var trackIdArray = [];
-
-        // console.log('found a bunch of track ids(?)')
-        // console.log($(".trackid").length);
 
         $(".trackid").each(function() {
             trackIdArray.push($(this).attr("data-trackid"));
@@ -268,5 +272,41 @@ $(function(){
         // location.replace(url);
         window.open(url, "_blank");
     }
+
+
+    function addToArtistPreview(array, artist) {
+        if (array.length === 1) {
+            $(".artist_preview_table").append("<ul id='artist_preview_list'></ul>");
+        }
+        $("#artist_preview_list").append("<li>" + artist + "</li>");
+    }
+
+
+    function addToArtistArray(evt){
+        var artistChecked = $(this).attr("value");
+
+        if ($(this).is(':checked')) {
+            artistsToAdd.push(artistChecked);
+            console.log("artistChecked checked:", artistChecked);
+            console.log("addArtistToTable checked:", artistsToAdd);
+            //add to ul=artist_preview_list
+            addToArtistPreview(artistsToAdd, artistChecked);
+        } else {
+            var index = artistsToAdd.indexOf(artistChecked);
+            artistsToAdd.splice(index, 1);
+            console.log("artistChecked unchecked:", artistChecked);
+            console.log("addArtistToTable unchecked:", artistsToAdd);
+            //remove from ul=artist_preview_list (li with artistToAdd text)
+            $('li:contains(' + artistChecked + ')').remove();
+        }
+
+    }
+
  
+    var artistsToAdd = [];
+
+    $("#playlist_submit").on("click", submitCheckedArtists);
+    $("button#playlist_clear").on("click", clearArtistsEvent);
+    $("input.artist_checkbox").on("click", addToArtistArray);
+
 });
