@@ -4,7 +4,8 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.orm import joinedload
 from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
-    Playlist, User, connect_to_db, db, add_new_user)
+    Playlist, User, connect_to_db, db, add_new_user, add_top10_tracks,
+    add_top10_tracks_check)
 import datetime
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -83,7 +84,7 @@ def specific_festival(festival_route):
         print "\nDatetime:", day1_datetime
         dow_num = datetime.datetime.isoweekday(day1_datetime)
         # day1_dow = helper_func.datetime_to_dow(day1_datetime)
-        # print "\nDay of the week:", day1_dow
+        # print "\nDay of the :", day1_dow
         stage = artist.stage.stage_name
         print "\nStage:", stage, "\n"
 
@@ -110,16 +111,13 @@ def specific_festival(festival_route):
 def playlist_review():
     """Display static preview of songs on playlist."""
 
-    playlist_artists = request.form.getlist("artists[]")
-    print playlist_artists
-
     playlist_json = {}
 
-    # Get Spotify Client Credentials access token
-    credential_token = client_credentials.get_access_token()
+    playlist_artists = request.form.getlist("artists[]")
+    # print playlist_artists
 
-    # Initialize spotify_credentials as Spotipy object
-    spotify_credentials = spotipy.Spotify(auth=credential_token)
+    # Initialize Spotify Authentication as Spotipy object
+    spotify = api_helper.initialize_spotify()
 
     for artist in playlist_artists:
         artist_info = Artist.query.filter_by(artist_name=artist).first()
@@ -127,28 +125,18 @@ def playlist_review():
         artist_spot_id = artist_info.spotify_artist_id
         spotify_artist_uri = 'spotify:artist:' + artist_spot_id
         recently_updated = artist_info.top10_updated_at
-        print "\n\n", artist_info.artist_name, "recently_updated", recently_updated
+        # print "\n\n", artist_info.artist_name, "recently_updated", recently_updated
         today = datetime.datetime.today()
-        print "today", today
+        # print "today", today
+
+
+
+        
 
         if recently_updated is None:
-            #### (john) should move this into a separate function so you don't repeat this below
-            #### design concern: might be beyond the scope of this project, but i would consider it
-            #### good design to separate components that update the database vs ones that retrieve
-            #### information. i.e. have a separate task or process that updates the database
+            new_top10_tracks = api_helper.spotify_top10(spotify_artist_uri, spotify)
 
-            new_top10_json = spotify_credentials.artist_top_tracks(spotify_artist_uri)
-            new_top10_tracks = new_top10_json['tracks']
-
-            for track in new_top10_tracks:
-                track_name = track['name']
-                track_id = track['id']
-
-                new_song = Song(song_name=track_name,
-                                artist_id=artist_db_id,
-                                spotify_track_id=track_id)
-
-                db.session.add(new_song)
+            add_top10_tracks(new_top10_tracks, artist_db_id)
 
             artist_info.top10_updated_at = today
             db.session.commit()
@@ -156,21 +144,10 @@ def playlist_review():
         elif recently_updated < (today - datetime.timedelta(days=7)):
             print "\n\n top10_updated_at has been updated!!!!!!"
 
-            new_top10_json = spotify_credentials.artist_top_tracks(spotify_artist_uri)
-            new_top10_tracks = new_top10_json['tracks']
+            new_top10_tracks = api_helper.spotify_top10(spotify_artist_uri, spotify)
             # new_top10_tracks.append({'name': 'haaaaay', 'id': 'NOT AN ID HAHAHAHAHA'})
 
-            for track in new_top10_tracks:
-                track_name = track['name']
-                track_id = track['id']
-
-                if not Song.query.filter_by(spotify_track_id=track_id).first():
-
-                    new_song = Song(song_name=track_name,
-                                    artist_id=artist_db_id,
-                                    spotify_track_id=track_id)
-
-                    db.session.add(new_song)
+            add_top10_tracks_check(new_top10_tracks, artist_db_id)
 
             artist_info.top10_updated_at = today
             db.session.commit()
@@ -178,16 +155,7 @@ def playlist_review():
         top_songs = Song.query.filter_by(artist_id=artist_db_id).all()
         print "\n\n", artist_info.artist_name, top_songs
 
-        #### (john) a cleaner way to do this might be to do
-        random.shuffle(top_songs)
-        random_songs = top_songs[0:3]
-
-        # if len(top_songs) >= 3:
-        #     random_songs = random.sample(top_songs, 3)
-        #     print "\n\nrandom_songs:", random_songs
-
-        # else:
-        #     random_songs = top_songs
+        random_songs = helper_func.shuffle_pick_songs(top_songs)
 
         song_name_id = {}
 

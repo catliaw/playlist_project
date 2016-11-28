@@ -208,6 +208,32 @@ def add_new_user(spotify_userid):
         print "\n", spotify_userid, "was already in the db!\n"
 
 
+def add_top10_tracks(new_top10_tracks, artist_db_id):
+    for track in new_top10_tracks:
+        track_name = track['name']
+        track_id = track['id']
+
+        new_song = Song(song_name=track_name,
+                        artist_id=artist_db_id,
+                        spotify_track_id=track_id)
+
+        db.session.add(new_song)
+
+
+def add_top10_tracks_check(new_top10_tracks, artist_db_id):
+    for track in new_top10_tracks:
+        track_name = track['name']
+        track_id = track['id']
+
+        if not Song.query.filter_by(spotify_track_id=track_id).first():
+
+            new_song = Song(song_name=track_name,
+                            artist_id=artist_db_id,
+                            spotify_track_id=track_id)
+
+            db.session.add(new_song)
+
+
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 

@@ -50,6 +50,17 @@ def check_token_valid():
     return token
 
 
+def initialize_spotify():
+    token = check_token_valid()
+
+    if token:
+        spotify = spotipy.Spotify(auth=token)
+    else:
+        print "\nSpotify Authentication token not valid!\n"
+
+    return spotify
+
+
 def find_spotify_userid(token):
     """Find user ID of user logged in."""
 
@@ -115,6 +126,10 @@ def add_tracks(spotify, playlist_info, userid, tracks_list):
     return playlist_url
 
 
+def spotify_top10(artist_uri, spotify):
+    new_top10_json = spotify.artist_top_tracks(artist_uri)
+    new_top10_tracks = new_top10_json['tracks']
 
+    return new_top10_tracks
 
 

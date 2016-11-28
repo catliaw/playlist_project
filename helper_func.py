@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+import random
 import datetime
 
 # make datetime_to_dow function in separate file
@@ -30,3 +30,10 @@ def datetime_to_dow(datetime_obj):
     dow_num = datetime.datetime.isoweekday(datetime_obj)
     dow = DAY_OF_WEEK[dow_num]
     return dow
+
+
+def shuffle_pick_songs(top_songs):
+    random.shuffle(top_songs)
+    random_songs = top_songs[0:3]
+
+    return random_songs
