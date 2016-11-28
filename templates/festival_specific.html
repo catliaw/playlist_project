@@ -8,14 +8,24 @@
     <div class="col-sm-8 col-xs-6">
       <h1>{{ festival_info.festival_name }}</h1>
       <h3>Lineup</h3>
-      Sort by:
-      <button id="sort_abc" type="button" class="btn btn-abc">Alphabetical</button>
-      <button id="sort_by_day" type="button" class="btn btn-day">Day</button>
-      <button id="sort_by_stage" type="button" class="btn btn-stage">Stage</button> 
+      <div class="row">
+         <div class="col-sm-12 sort-div">
+          Sort by:
+          <button id="sort_abc" type="button" class="btn btn-abc">
+            Alphabetical
+          </button>
+          <button id="sort_by_day" type="button" class="btn btn-day">
+            Day
+          </button>
+          <button id="sort_by_stage" type="button" class="btn btn-stage">
+            Stage
+          </button>
+        </div>
+      </div>
       <div class="row" id="display_lineup">
         {% for i in range(0, length) %}
         <div class="lineup-box col-sm-3 col-xs-6">
-          <label for="box_input{{ i }}" id="box_label{{ i }}">
+          <label for="box_input{{ i }}" id="box_label{{ i }}" class="artist_checklabel">
             <input id="box_input{{ i }}" class="artist_checkbox" type="checkbox" name="artist" value="">
             <span id="box_span{{ i }}" ></span>
           </label>
@@ -28,8 +38,8 @@
       <h3>Add to playlist</h3>
       <div class="artist_preview_table">
       </div>
-      <button id="playlist_submit" type="button">Preview Playlist</button>
-      <button id="playlist_clear" type="button">Clear</button>
+      <button id="playlist_submit" type="button" class="btn">Preview Playlist</button>
+      <button id="playlist_clear" type="button" class="btn">Clear</button>
       <div class="preview_list" id="playlist_preview">
       </div>
     </div>

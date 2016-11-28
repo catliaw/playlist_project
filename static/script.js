@@ -104,7 +104,7 @@ $(function(){
             // var dowName = $('.lineup-box[data-day="' + key + '"]').first();
             // console.log("First" + value + "div", dowName);
             $('.lineup-box[data-day="' + key + '"]').first()
-                .before('<div class="filter_header col-sm-12"><h3>' + value + '</h3></div>');
+                .before('<div class="filter_header col-sm-12"><h3 class="filter-header-text">' + value + '</h3></div>');
         });
     }
 
@@ -116,7 +116,7 @@ $(function(){
             // var stageName = $('.lineup-box[data-stage="' + stages[i] + '"]').first();
             // console.log("First" + stages[i] + "div", stageName);
             $('.lineup-box[data-stage="' + stages[i] + '"]').first()
-                .before('<div class="filter_header col-sm-12"><h3>' + stages[i] + '</h3></div>');
+                .before('<div class="filter_header col-sm-12"><h3 class="filter-header-text">' + stages[i] + '</h3></div>');
         }
     }
 
@@ -163,15 +163,15 @@ $(function(){
     function displayPlaylist(data){
         console.log(data);
 
-        var topHTML = "<h3>Playlist Preview</h3>" +
+        var topHTML = "<h3>Preview of songs on playlist</h3>" +
             "<ul id='song_preview_list'>";
 
         var bottomHTML = '</ul>' +
             '<form>' +
-            '<p>Playlist name: ' +
+            '<p class="playlist-field"><span class="playlist-naming">Playlist name: </span>' +
             '<input id="playlist_name" type="text" name="playlist_name"></p>' +
             '<div class="generate_div">' +
-            '<button id="generate_button" type="button">' +
+            '<button id="generate_button" type="button" class="btn">' +
             'Generate Spotify Playlist</button>' +
             '</div>' +
             '</form>';
@@ -213,7 +213,7 @@ $(function(){
         console.log("Artist to Submit:", artistsToSubmit);
         if (typeof artistsToSubmit !== 'undefined' && artistsToSubmit.length > 0) {
             $.post("/preview.json", {"artists": artistsToSubmit}, displayPlaylist);
-            console.log("post!")
+            console.log("post!");
         }
     }
 
@@ -309,5 +309,21 @@ $(function(){
     $("#playlist_submit").on("click", submitCheckedArtists);
     $("button#playlist_clear").on("click", clearArtistsEvent);
     $("input.artist_checkbox").on("click", addToArtistArray);
+
+    // jQuery for page scrolling feature - requires jQuery Easing plugin
+    $('.page-scroll a').bind('click', function(event) {
+        var $anchor = $(this);
+        $('html, body').stop().animate({
+            scrollTop: ($($anchor.attr('href')).offset().top - 50)
+        }, 1250, 'easeInOutExpo');
+        event.preventDefault();
+    });
+
+    // Offset for Main Navigation
+    $('#mainNav').affix({
+        offset: {
+            top: 100
+        }
+    })
 
 });

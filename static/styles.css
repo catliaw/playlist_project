@@ -2,8 +2,54 @@ html {
   box-sizing: border-box;
 }
 
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #000000;
+}
+
 *, *:before, *:after {
   box-sizing: border-box;
+}
+
+.home-title {
+  font-size:5em;
+  text-align: center;
+  letter-spacing: -2px;
+}
+
+.festival-title {
+  font-size: 3em;
+  text-align: center;
+  letter-spacing: -2px;
+}
+
+.home-section {
+  padding: 100px 0;
+}
+
+.festival-section {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.home-paragraph {
+  font-weight:normal;
+  letter-spacing: -1px;
+}
+
+.home-paragraph-2 {
+  font-weight:normal;
+  padding-bottom:20px;
+  letter-spacing: -1px;
+}
+
+.festival-list {
+  font-size: 1.5em;
+}
+
+.festival-list a {
+  color: #2EBD59;
+  text-decoration: none;
 }
 
 .generate_div {
@@ -25,10 +71,20 @@ html {
   vertical-align: top;
 }
 
+.artist_checkbox span {
+  font-weight: normal;
+  text-decoration: none;
+}
+
+.artist_checklabel {
+  font-weight: normal;
+}
+
 .artist_preview_table {
   border: 1px solid #c5c5c5;
   min-height: 50px;
-  margin-bottom:10px;
+  padding-top:7px;
+  margin-bottom:15px;
 }
 
 #artist_preview_list {
@@ -51,3 +107,156 @@ html {
   width: 50em;
   border: dotted 1px #ff0000;
 }*/
+.sort-div {
+  padding-top: 2px;
+  padding-bottom: 15px;
+}
+
+.btn {
+  background-color: #2EBD59;
+  color: #ffffff;
+  padding: 4px 10px;
+}
+
+.btn:hover {
+  background: #1ed65e;
+  transition: all 160ms ease-in;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.btn:focus,
+.btn:active {
+  color: #ffffff;
+}
+
+.navbar-custom {
+  background: #000000;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  border: none;
+  color: #ffffff;
+}
+.navbar-custom a:focus {
+  outline: none;
+}
+.navbar-custom .navbar-brand {
+  color: white;
+}
+.navbar-custom .navbar-brand:hover,
+.navbar-custom .navbar-brand:focus,
+.navbar-custom .navbar-brand:active,
+.navbar-custom .navbar-brand.active {
+  color: white;
+}
+.navbar-custom .navbar-nav {
+  letter-spacing: 1px;
+}
+.navbar-custom .navbar-nav li a {
+  color: white;
+}
+
+.navbar-custom .navbar-nav li a:hover {
+  color: #2EBD59;
+  outline: none;
+}
+.navbar-custom .navbar-nav li a:focus,
+.navbar-custom .navbar-nav li a:active {
+  color: white;
+}
+.navbar-custom .navbar-nav li.active a {
+  color: white;
+  background: #2EBD59;
+}
+.navbar-custom .navbar-nav li.active a:hover,
+.navbar-custom .navbar-nav li.active a:focus,
+.navbar-custom .navbar-nav li.active a:active {
+  color: white;
+  background: #2EBD59;
+}
+.navbar-custom .navbar-toggle {
+  color: white;
+  text-transform: uppercase;
+  font-size: 10px;
+  border-color: white;
+}
+.navbar-custom .navbar-toggle:hover,
+.navbar-custom .navbar-toggle:focus {
+  background-color: #2EBD59;
+  color: white;
+  border-color: #2EBD59;
+}
+@media (min-width: 768px) {
+  .navbar-custom {
+    padding: 25px 0;
+    -webkit-transition: padding 0.3s;
+    -moz-transition: padding 0.3s;
+    transition: padding 0.3s;
+  }
+  .navbar-custom .navbar-brand {
+    font-size: 2em;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+  }
+  .navbar-custom.affix {
+    padding: 10px 0;
+  }
+  .navbar-custom.affix .navbar-brand {
+    font-size: 1.5em;
+  }
+}
+
+.base-section {
+  padding: 100px 0;
+}
+
+.center-button-div {
+  text-align: center;
+  width: 100%;
+}
+
+.spotify-btn a {
+    margin: auto;
+    background: #2EBD59;
+    border-radius: 24px;
+    text-transform: uppercase;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 1em;
+    font-weight: 500;
+    letter-spacing: .06em;
+    display: block;
+    width: 250px;
+    height: 48px;
+    padding-top: -15px;
+    vertical-align: middle;
+}
+.spotify-btn a::before {
+    content: url('spotify_icon3.png');
+    margin-right: 7px;
+    position: relative;
+    top: 9px;
+}
+.spotify-btn a:hover {
+    background: #1ed65e;
+    transition: all 160ms ease-in;
+    text-decoration: none;
+}
+
+.spotify-btn a:active{
+  text-decoration: none;
+}
+
+.playlist-naming {
+  font-weight: bold;
+  padding-top: 10px;
+}
+
+.playlist-field{
+  padding-top: 10px;
+}
+
+.filter-header-text {
+  margin-top: 0;
+}

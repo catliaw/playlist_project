@@ -24,12 +24,15 @@ spotify_oauth = SpotifyOAuth(
 
 
 def code_to_access_token(code):
+    """Get token information by giving Spotify OAuth the code from user login."""
+
     token_info = spotify_oauth.get_access_token(code)
 
     return token_info
 
 
 def token_to_session(token_info):
+    """Set up token information to session data."""
 
     session['token_info'] = token_info
 
@@ -40,6 +43,8 @@ def token_to_session(token_info):
 
 
 def check_token_valid():
+    """Check that token in session is valid. If not, refresh."""
+
     token = session['token']
     token_info = session['token_info']
 
@@ -51,6 +56,8 @@ def check_token_valid():
 
 
 def initialize_spotify():
+    """Initialize Spotipy instance once token is valid."""
+
     token = check_token_valid()
 
     if token:
@@ -90,6 +97,7 @@ def process_login(code):
 
 
 def create_spotify_playlist(spotify, userid, playlist_name):
+    """Create a Spotify playlist with Spotify API."""
 
     # Create playlist. Need user id, name of playlist, public (=True default)
     # spotify.user_playlist_create(user, name, public)
@@ -106,7 +114,7 @@ def create_spotify_playlist(spotify, userid, playlist_name):
 
 
 def add_tracks(spotify, playlist_info, userid, tracks_list):
-
+    """Add songs to Spotify playlist created."""
     playlist_id = playlist_info['id']
     print "\nPlaylist Spotify ID", playlist_id, "\n"
 
@@ -127,6 +135,7 @@ def add_tracks(spotify, playlist_info, userid, tracks_list):
 
 
 def spotify_top10(spotify_artist_uri, spotify):
+    """Use Spotify API to find artist's Top 10 Tracks."""
     new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
     new_top10_tracks = new_top10_json['tracks']
 

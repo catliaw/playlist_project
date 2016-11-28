@@ -2,12 +2,33 @@
 
 {% block title %}Playfest{% endblock %}
 
-{% block content %}
-  <h1>Playfest</h1>
-  <p>Some paragraph about Playfest (project name possibly subject to change).</p>
-  
-  {% if "user_spot_id" not in session %}
-    <div class='spotify-btn'><a href={{ url }}>Sign In With Spotify</a></div>
-  {% endif %}
+{% block styles %}
+  <style>
+    body {
+      background-image: url('{{ url_for('static', filename='bg_heartgreen2.jpg') }}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 60% 0%;
+      background-attachment: fixed;
+      background-color: #ffffff;
+    }
+  </style>
+{% endblock %}
 
+{% block content %}
+  <div class="row" id="home-div">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <section class="home-section">
+        <h1 class="home-title">Playfest</h1>
+        <h3 class="home-paragraph">Ever wish you had sampled the music of more artists before a music festival?</h3>
+        <h3 class="home-paragraph-2">With Playfest, you can choose artists from a festival lineup and generate a Spotify playlist with a few top songs of each artist.</h3>
+      
+        {% if "user_spot_id" not in session %}
+          <div class='spotify-btn'><a href={{ url }}>Sign In With Spotify</a></div>
+        {% endif %}
+      </section>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
 {% endblock %}

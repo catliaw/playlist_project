@@ -2,16 +2,36 @@
 
 {% block title %}Festivals{% endblock %}
 
-{% block content %}
-  <h1>Festivals</h1>
+{% block styles %}
+  <style>
+    body {
+      background-image: url('{{ url_for('static', filename='bg_heartgreen2.jpg') }}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 60% 0%;
+      background-attachment: fixed;
+      background-color: #ffffff;
+    }
+  </style>
+{% endblock %}
 
-  {% if festivals %}
-    {% for festival in festivals %}
-      <p>
-        <a href="/festivals/{{ festival.festival_route }}">
-          {{ festival.festival_name }}
-        </a>
-      </p>
-    {% endfor %}
-  {% endif %}
+{% block content %}
+  <div class="row" id="home-div">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <section class="festival-section">
+        <h1 class="festival-title">Festivals</h1>
+        {% if festivals %}
+          {% for festival in festivals %}
+            <p class="festival-list">
+              <a href="/festivals/{{ festival.festival_route }}">
+                {{ festival.festival_name }}
+              </a>
+            </p>
+          {% endfor %}
+        {% endif %}
+      </section>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
 {% endblock %}

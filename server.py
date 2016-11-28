@@ -161,7 +161,7 @@ def callback():
     if code:
         api_helper.process_login(code)
 
-        return redirect('/')
+        return redirect('/festivals')
 
     # else redirect to homepage where can sign in.
     else:
