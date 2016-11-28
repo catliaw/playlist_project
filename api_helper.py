@@ -1,6 +1,6 @@
 import os
 from flask import flash, session
-from model import add_new_user
+import model
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import random
@@ -74,7 +74,7 @@ def find_spotify_userid(token):
 
 def add_userid_db_session(userid):
     """Take userid and add user to User table and session."""
-    add_new_user(userid)
+    model.add_new_user(userid)
 
     session['user_spot_id'] = userid
     flash("Logged in.")
@@ -126,8 +126,8 @@ def add_tracks(spotify, playlist_info, userid, tracks_list):
     return playlist_url
 
 
-def spotify_top10(artist_uri, spotify):
-    new_top10_json = spotify.artist_top_tracks(artist_uri)
+def spotify_top10(spotify_artist_uri, spotify):
+    new_top10_json = spotify.artist_top_tracks(spotify_artist_uri)
     new_top10_tracks = new_top10_json['tracks']
 
     return new_top10_tracks

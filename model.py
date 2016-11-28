@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+import datetime
+import api_helper
 
 # This is the connection to the PostgreSQL database; we're getting this through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
@@ -232,6 +234,39 @@ def add_top10_tracks_check(new_top10_tracks, artist_db_id):
                             spotify_track_id=track_id)
 
             db.session.add(new_song)
+
+
+def parse_commit_top10(recently_updated,
+                       today,
+                       spotify,
+                       spotify_artist_uri,
+                       artist_db_info,
+                       artist_db_id):
+
+    if recently_updated is None:
+
+        new_top10_tracks = api_helper.spotify_top10(spotify_artist_uri, spotify)
+
+        add_top10_tracks(new_top10_tracks, artist_db_id)
+
+    elif recently_updated < (today - datetime.timedelta(days=7)):
+
+        new_top10_tracks = api_helper.spotify_top10(spotify_artist_uri, spotify)
+        # to test whether track updating works after however many days/time set
+        # new_top10_tracks.append({'name': 'haaaaay', 'id': 'NOT AN ID HAHAHAHAHA'})
+        print "\n\n top10_updated_at has been updated!!!!!!"
+
+        add_top10_tracks_check(new_top10_tracks, artist_db_id)
+
+    artist_db_info.top10_updated_at = today
+    db.session.commit()
+
+
+def check_db_top10(artist_db_id, artist_db_info):
+    top_songs = Song.query.filter_by(artist_id=artist_db_id).all()
+    print "\n\n", artist_db_info.artist_name, top_songs
+
+    return top_songs
 
 
 def connect_to_db(app):
