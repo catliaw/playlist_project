@@ -3,10 +3,10 @@
 {% block title %}{{ festival_info.festival_name }}{% endblock %}
 
 {% block content %}
-  <h1>{{ festival_info.festival_name }}</h1>
 
   <div class="row">
     <div class="col-sm-8 col-xs-6">
+      <h1>{{ festival_info.festival_name }}</h1>
       <h3>Lineup</h3>
       Sort by:
       <button id="sort_abc" type="button" class="btn btn-abc">Alphabetical</button>
@@ -24,18 +24,16 @@
       </div>
     </div>
 
-    <div class="col-sm-4 col-xs-6">
+    <div class="col-sm-4 col-xs-6" id="sidebar">
       <h3>Add to playlist</h3>
       <div class="artist_preview_table">
       </div>
       <button id="playlist_submit" type="button">Preview Playlist</button>
       <button id="playlist_clear" type="button">Clear</button>
-    </div>
-
-    <div class="col-sm-4">
       <div class="preview_list" id="playlist_preview">
       </div>
     </div>
+    
   </div>
 {% endblock %}
 

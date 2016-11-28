@@ -42,3 +42,12 @@ html {
 .filter_header {
   text-align: center;
 }
+
+/*#sidebar {
+  float:right;
+  margin: 0 0 0 2em;
+  max-height: 100%;
+  overflow: auto;
+  width: 50em;
+  border: dotted 1px #ff0000;
+}*/

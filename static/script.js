@@ -164,7 +164,7 @@ $(function(){
         console.log(data);
 
         var topHTML = "<h3>Playlist Preview</h3>" +
-            "<ul>";
+            "<ul id='song_preview_list'>";
 
         var bottomHTML = '</ul>' +
             '<form>' +
@@ -232,6 +232,7 @@ $(function(){
         });
         $('#artist_preview_list').remove();
         artistsToAdd = [];
+        $('#playlist_preview').empty();
     }
 
 
