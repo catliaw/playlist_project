@@ -55,7 +55,9 @@ $(function(){
     function composeSortByABC(data) {
 
         var sortABC = data.sort(function (a, b) {
-            return (a.artist_name < b.artist_name) ? -1 : 1;
+            var artistNameABCA = a.artist_name.toLowerCase().localeCompare(b.artist_name.toLowerCase());
+            var artistNameABCB = b.artist_name.toLowerCase().localeCompare(a.artist_name.toLowerCase());
+            return ( artistNameABCA < artistNameABCB ) ? -1 : 1;
         });
 
         loadLineup(sortABC, 0);
@@ -66,7 +68,9 @@ $(function(){
 
         var sortByDay = data.sort(function (a, b) {
             if (a.playing_on == b.playing_on) {
-                return (a.artist_name < b.artist_name) ? -1 : (a.artist_name > b.artist_name) ? 1 : 0;
+                var artistNameDayA = a.artist_name.toLowerCase().localeCompare(b.artist_name.toLowerCase());
+                var artistNameDayB = b.artist_name.toLowerCase().localeCompare(a.artist_name.toLowerCase());
+                return (artistNameDayA < artistNameDayB) ? -1 : (artistNameDayA > artistNameDayB) ? 1 : 0;
             }
             else {
                 return (a.playing_on < b.playing_on) ? -1 : 1;
@@ -81,7 +85,10 @@ $(function(){
 
         var sortByStage = data.sort(function (a, b) {
             if (a.stage == b.stage) {
-                return (a.artist_name < b.artist_name) ? -1 : (a.artist_name > b.artist_name) ? 1 : 0;
+                var artistNameStageA = a.artist_name.toLowerCase().localeCompare(b.artist_name.toLowerCase());
+                var artistNameStageB = b.artist_name.toLowerCase().localeCompare(a.artist_name.toLowerCase());
+
+                return (artistNameStageA < artistNameStageB) ? -1 : (artistNameStageA > artistNameStageB) ? 1 : 0;
             }
             else {
                 return (a.stage < b.stage) ? -1 : 1;
@@ -141,7 +148,9 @@ $(function(){
         composeSortByABC(artistInfo);
     }
 
-    loadLineup(artistInfo, 0);
+    // loadLineup(artistInfo, 0);
+    composeSortByABC(artistInfo);
+    
     $('#sort_abc').on('click', loadSortABC);
     $('#sort_by_day').on('click', loadSortByDay);
     $('#sort_by_stage').on('click', loadSortByStage);

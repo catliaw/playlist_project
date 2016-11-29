@@ -14,11 +14,41 @@ def load_festivals():
 
     print "Festival Info"
 
-    coachella = Festival(festival_name="Coachella 2016",
-                         festival_route="coachella-2016",
-                         festival_url="https://www.coachella.com/")
+    coachella2015 = Festival(festival_name="Coachella 2015",
+                             festival_route="coachella-2015",
+                             festival_url="https://www.coachella.com/")
 
-    db.session.add(coachella)
+    snowglobe2016 = Festival(festival_name="Snowglobe 2016",
+                             festival_route="snowglobe-2016",
+                             festival_url="http://snowglobemusicfestival.com/")
+
+    snowglobe2015 = Festival(festival_name="Snowglobe 2015",
+                             festival_route="snowglobe-2015",
+                             festival_url="http://snowglobemusicfestival.com/")
+
+    lib2016 = Festival(festival_name="Life is Beautiful 2016",
+                       festival_route="lifeisbeautiful-2016",
+                       festival_url="http://lifeisbeautiful.com/")
+
+    lib2015 = Festival(festival_name="Life is Beautiful 2015",
+                       festival_route="lifeisbeautiful-2015",
+                       festival_url="http://lifeisbeautiful.com/")
+
+    osw2016 = Festival(festival_name="Outside Lands 2016",
+                       festival_route="outsidelands-2016",
+                       festival_url="http://www.sfoutsidelands.com/")
+
+    osw2015 = Festival(festival_name="Outside Lands 2015",
+                       festival_route="outsidelands-2015",
+                       festival_url="http://www.sfoutsidelands.com/")
+
+    db.session.add(coachella2015)
+    db.session.add(snowglobe2016)
+    db.session.add(snowglobe2015)
+    db.session.add(lib2016)
+    db.session.add(lib2015)
+    db.session.add(osw2016)
+    db.session.add(osw2015)
 
     db.session.commit()
 

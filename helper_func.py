@@ -108,4 +108,4 @@ def build_lineup_list(artist_list, artist_info):
             "playing_on": dow_num,
             "stage": stage
             })
-        # print "\nArtist Info List:", artist_info, "\n"
+        print "\nArtist Info List:", artist_info, "\n"

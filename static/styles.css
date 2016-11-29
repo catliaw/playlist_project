@@ -4,8 +4,9 @@ html {
 
 body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #000000;
+  color: #191414;
 }
+
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -34,13 +35,13 @@ body {
 
 .home-paragraph {
   font-weight:normal;
-  letter-spacing: -1px;
+  /*letter-spacing: -1px;*/
 }
 
 .home-paragraph-2 {
   font-weight:normal;
   padding-bottom:20px;
-  letter-spacing: -1px;
+  /*letter-spacing: -1px;*/
 }
 
 .festival-list {
@@ -52,12 +53,23 @@ body {
   text-decoration: none;
 }
 
+.festival-list a:hover {
+  color: #1ed65e;
+  text-decoration: none;
+}
+
+.festival-list a:active,
+.festival-list a:focus {
+  color: #2EBD59;
+  text-decoration: none;
+}
+
 .generate_div {
   margin-top:10px;
 }
 
 .in-spotify {
-  color: #454545;
+  color: #191414;
 }
 
 .not-on-spotify {
@@ -112,10 +124,20 @@ body {
   padding-bottom: 15px;
 }
 
+.festival-header {
+  text-align: center;
+  letter-spacing: -2px;
+}
+
 .btn {
   background-color: #2EBD59;
   color: #ffffff;
-  padding: 4px 10px;
+  padding: 4px 20px;
+  text-transform: uppercase;
+  border-radius: 24px;
+  margin-right: 3px;
+  margin-left: 2px;
+  font-weight: 500;
 }
 
 .btn:hover {
@@ -123,15 +145,20 @@ body {
   transition: all 160ms ease-in;
   text-decoration: none;
   color: #ffffff;
+  outline: none;
+
 }
 
 .btn:focus,
 .btn:active {
   color: #ffffff;
+  text-decoration: none;
+  border: none;
+  outline: none;
 }
 
 .navbar-custom {
-  background: #000000;
+  background: #191414;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
   border: none;
@@ -227,7 +254,7 @@ body {
     font-weight: 500;
     letter-spacing: .06em;
     display: block;
-    width: 250px;
+    width: 270px;
     height: 48px;
     padding-top: -15px;
     vertical-align: middle;
@@ -237,6 +264,7 @@ body {
     margin-right: 7px;
     position: relative;
     top: 9px;
+    text-decoration:none;
 }
 .spotify-btn a:hover {
     background: #1ed65e;
@@ -244,7 +272,8 @@ body {
     text-decoration: none;
 }
 
-.spotify-btn a:active{
+.spotify-btn a:active,
+.spotify-btn a:focus {
   text-decoration: none;
 }
 
@@ -259,4 +288,26 @@ body {
 
 .filter-header-text {
   margin-top: 0;
+  margin-bottom: 10px;
+  /*letter-spacing: -1px;*/
+
+}
+
+.alert {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.alert-success {
+  background-color: #2EBD59;
+  color: #ffffff;
+  border: none;
+  text-align: center;
+  opacity: 0.75;
+  filter: alpha(opacity=75);
+}
+
+.trackid {
+  list-style-position: outside;
 }
