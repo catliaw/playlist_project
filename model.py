@@ -269,11 +269,11 @@ def check_db_top10(artist_db_id, artist_db_info):
     return top_songs
 
 
-def connect_to_db(app):
+def connect_to_db(app, db_uri='postgresql:///playfest'):
     """Connect the database to our Flask app."""
 
     # Configure to use our PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///playfest'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     # app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
