@@ -9,7 +9,7 @@ from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
     Playlist, User, connect_to_db, db)
 
 
-def load_festivals():
+def load_more_festivals():
     """Manually load Coachella festival information into database."""
 
     print "Festival Info"

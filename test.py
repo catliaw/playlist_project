@@ -5,6 +5,7 @@ from model import (Festival, FestivalArtist, Stage, Artist, Song, PlaylistSong,
 from server import app
 import server
 from seed import load_festivals
+from seed_more_festivals import load_more_festivals
 
 
 class FlaskTestsBasic(TestCase):
@@ -24,6 +25,13 @@ class FlaskTestsBasic(TestCase):
 
         result = self.client.get("/")
         self.assertIn("Playfest", result.data)
+        self.assertIn("Sign In With Spotify", result.data)
+
+    def test_index_login(self):
+        """Test homepage page."""
+
+        result = self.client.get("/")
+        self.assertIn("Sign In With Spotify", result.data)
 
 
 class FlaskTestsDatabase(TestCase):
@@ -43,6 +51,7 @@ class FlaskTestsDatabase(TestCase):
         db.create_all()
         # example_data()
         load_festivals()
+        load_more_festivals()
 
     def tearDown(self):
         """Do at end of every test."""
@@ -50,11 +59,14 @@ class FlaskTestsDatabase(TestCase):
         db.session.close()
         db.drop_all()
 
-    def test_departments_list(self):
+    def test_festival_list(self):
         """Test departments page."""
 
         result = self.client.get("/festivals")
         self.assertIn("Coachella 2016", result.data)
+        self.assertIn("Coachella 2015", result.data)
+        self.assertIn("Snowglobe 2016", result.data)
+        self.assertIn("Outside Lands 2016", result.data)
 
 
     # def test_departments_details(self):
