@@ -42,7 +42,8 @@ def load_snowglobe_artists():
         "Cremes n Lotions": None,
         "MASCOLO": None,
         "Cassian": "1ChtRJ3f4rbv4vtz87i6CD",
-        "Vincent": "3yjt1AlzEQZXvUPaSfSwCj"
+        "Vincent": "3yjt1AlzEQZXvUPaSfSwCj",
+        "Point Point": "5L67d6oZKOOmXcBcMMJdZZ"
     }
 
     # initialize Spotify Client Credentials object with app's client ID/secret
@@ -58,74 +59,78 @@ def load_snowglobe_artists():
     spotify = spotipy.Spotify(auth=credential_token)
 
     # Read coachella_artist10.json file and insert artist data
-    with open('seed_data/snowglobe_artists5.json') as json_data:
+    with open('seed_data/snowglobe_artists6.json') as json_data:
         d = json.load(json_data)
 
         for row in d:
-            name = row.get('artist')
+            name = row.get('artist').strip()
             print "Artist name from JSON: " + name
             # url = row.get('website_url', None)
             # img = row.get('image_url', None)
 
-            results = spotify.search(q='artist:' + name, type='artist')
+            search_existing_artist = Artist.query.filter_by(artist_name=name).first()
 
-            # This errors out if the list is not in Spotify API and list is empty
-            # artist_info = results['artists']['items'][0]
+            if search_existing_artist is None:
 
-            # if list is empty, add to dictionary as None,
-            # which will be changed to null when turned into a JSON object
-            if not results['artists']['items']:
-                spotify_id = None
-                row['spotify_artist_id'] = spotify_id
-                print "New row with spot_id as None for", name, "\n", row, "\n\n"
-                artist_info_list.append(row)
+                results = spotify.search(q='artist:' + name, type='artist')
 
-            #### (john) you can replace this with a dictionary:
-            #### i.e. {"Bedouin": "5bKdC6382t97Qnpvs81Rqx",
-            ####       "DESPACIO": None}
-            #### etc
+                # This errors out if the list is not in Spotify API and list is empty
+                # artist_info = results['artists']['items'][0]
 
-            # elif name == "Bedouin":
-            #     spotify_id = "5bKdC6382t97Qnpvs81Rqx"
-            # ...
+                # if list is empty, add to dictionary as None,
+                # which will be changed to null when turned into a JSON object
+                if not results['artists']['items']:
+                    spotify_id = None
+                    row['spotify_artist_id'] = spotify_id
+                    print "New row with spot_id as None for", name, "\n", row, "\n\n"
+                    artist_info_list.append(row)
 
-            elif name in not_first_result:
-                spotify_id = not_first_result[name]
+                #### (john) you can replace this with a dictionary:
+                #### i.e. {"Bedouin": "5bKdC6382t97Qnpvs81Rqx",
+                ####       "DESPACIO": None}
+                #### etc
 
-            # else... not an empty list, add spotify_artist_id to the db
-            # add key:value pair into dictionary, to be added to be dictionary,
-            # which will be turned into a JSON object, so I do not need to keep
-            # calling the Spotify API when seeding my db.
-            else:
-                artist_info = results['artists']['items'][0]
-                print "Artist name from Spotify:", artist_info['name'], "\n"
-                print artist_info
-                # adding Spotify Artist ID to variable
-                spotify_id = artist_info['id']
-                print spotify_id
+                # elif name == "Bedouin":
+                #     spotify_id = "5bKdC6382t97Qnpvs81Rqx"
+                # ...
 
-                # add a new key:value pair to add to row
-                row['spotify_artist_id'] = spotify_id
-                print "New row with spot_id for", name, "\n", row, "\n\n"
-                artist_info_list.append(row)
+                elif name in not_first_result:
+                    spotify_id = not_first_result[name]
 
-                # Check if artist name from Coachella list is the same
-                # as artist name from Spotify, if not add to
-                # not_the_same dictionary {coachella name: spotify name}
-                if name.lower() != artist_info['name'].lower():
-                    name_not_same[name] = artist_info['name']
+                # else... not an empty list, add spotify_artist_id to the db
+                # add key:value pair into dictionary, to be added to be dictionary,
+                # which will be turned into a JSON object, so I do not need to keep
+                # calling the Spotify API when seeding my db.
+                else:
+                    artist_info = results['artists']['items'][0]
+                    print "Artist name from Spotify:", artist_info['name'], "\n"
+                    print artist_info
+                    # adding Spotify Artist ID to variable
+                    spotify_id = artist_info['id']
+                    print spotify_id
 
-                name = artist_info['name']
+                    # add a new key:value pair to add to row
+                    row['spotify_artist_id'] = spotify_id
+                    print "New row with spot_id for", name, "\n", row, "\n\n"
+                    artist_info_list.append(row)
 
-            #### TO DO!!!! make request from spotify --> probably function call ####
+                    # Check if artist name from Coachella list is the same
+                    # as artist name from Spotify, if not add to
+                    # not_the_same dictionary {coachella name: spotify name}
+                    if name.lower() != artist_info['name'].lower():
+                        name_not_same[name] = artist_info['name']
 
-            artist = Artist(artist_name=name,
-                            artist_url=None,
-                            artist_img=None,
-                            spotify_artist_id=spotify_id)
+                    name = artist_info['name']
 
-            # We need to add to the session or it won't ever be stored
-            db.session.add(artist)
+                #### TO DO!!!! make request from spotify --> probably function call ####
+
+                artist = Artist(artist_name=name,
+                                artist_url=None,
+                                artist_img=None,
+                                spotify_artist_id=spotify_id)
+
+                # We need to add to the session or it won't ever be stored
+                db.session.add(artist)
 
         # Once we're done, we should commit our work
         db.session.commit()
@@ -139,6 +144,38 @@ def load_snowglobe_artists():
         coachella_spotify.close
 
 
+def load_snowglobe_stages():
+    """Load Snowglobe stage info."""
+
+    print "Snowglobe Stages"
+
+    # Read snowglobe_artists6.json file and insert stage data
+    with open('seed_data/snowglobe_artists6.json') as json_data:
+        d = json.load(json_data)
+
+        festival_info = Festival.query.filter_by(festival_name="SnowGlobe 2016").first()
+        fest_id = festival_info.festival_id
+
+        stages = []
+
+        for row in d:
+            stage = row.get('stage', None).strip()
+
+            if (stage not in stages) and (stage is not None):
+                stages.append(stage)
+
+                #Considering that Coachella is the only festival in db, index=1
+                snowglobe_stage = Stage(stage_name=stage,
+                                        festival_id=fest_id)
+
+                db.session.add(snowglobe_stage)
+
+            else:
+                pass
+
+        db.session.commit()
+
+
 def load_festivalartists():
     """Load Coachella artist-festival-stage data into festival_artists relational table."""
 
@@ -149,7 +186,7 @@ def load_festivalartists():
     # FestivalArtist.query.delete()
 
     # Read coachella_artist10.json file and insert festival artist data
-    with open('seed_data/snowglobe_artists5.json') as json_data:
+    with open('seed_data/snowglobe_artists6.json') as json_data:
         d = json.load(json_data)
 
         for row in d:
@@ -163,6 +200,8 @@ def load_festivalartists():
             artist_id = artist_info.artist_id
             # print artist_id
 
+            stage = row.get('stage', None)
+
             if day1:
                 day1_formatted = day1[-5:] + "/2016"
                 print "\n\nday1_formatted", day1_formatted, "\n\n"
@@ -170,11 +209,15 @@ def load_festivalartists():
             else:
                 playing_at = None
 
+            stage_info = Stage.query.filter_by(stage_name=stage).first()
+            # print stage_info
+            stage_id = stage_info.stage_id
+
             festival_artist = FestivalArtist(festival_id=2,
                                              artist_id=artist_id,
                                              day1_at=playing_at,
                                              day2_at=None,
-                                             stage_id=None)
+                                             stage_id=stage_id)
 
             db.session.add(festival_artist)
 
@@ -187,4 +230,5 @@ if __name__ == "__main__":
 
     load_festivals()
     load_snowglobe_artists()
+    load_snowglobe_stages()
     load_festivalartists()
